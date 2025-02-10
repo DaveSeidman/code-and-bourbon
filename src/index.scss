@@ -29,14 +29,20 @@ html, body {
     background: black;
     color: white;
     padding: 1rem;
-    &:before { content: '<'}
-    &:after { content: '/>'}
+    width: calc(100% - 6rem);
+    max-width: 1000px;
+    margin: 2rem auto;
+
+    &:before { content: '< '}
+    &:after { content: ' />'}
 
   }
 
-  p {
-    margin: 1rem;
+  p, ul {
+    margin: 1rem auto;
     line-height: 1.75rem;
+    width: calc(100% - 4rem);
+    max-width: calc(1000px + 2rem);
   }
 
   .header {
