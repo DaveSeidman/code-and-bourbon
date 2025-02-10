@@ -42,6 +42,11 @@ export default function App() {
                     <li>Sep 2024: Park Slope</li>
                   </ul>
                 </div>
+                <div className="pages-page join">
+                  <h1>One of Us! One of Us!</h1>
+                  <p>Join us by setting up a profile here: link</p>
+                  <p>You'll receive information about how to join us in person at the next metup!d</p>
+                </div>
               </div>
             </div>
           )}
