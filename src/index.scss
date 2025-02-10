@@ -26,8 +26,12 @@ html, body {
     font-family: 'Atkinson';
     font-weight: 600;
     font-size: 1rem;
+    background: black;
+    color: white;
+    padding: 1rem;
     &:before { content: '<'}
     &:after { content: '/>'}
+
   }
 
   p {
