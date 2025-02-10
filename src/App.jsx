@@ -10,11 +10,11 @@ export default function App() {
       <Routes>
         <Route
           path="/:page?"
-          element={
+          element={(
             <div className="app">
               <h1>🥃 Code & Bourbon</h1>
             </div>
-          }
+          )}
         />
       </Routes>
     </Router>
