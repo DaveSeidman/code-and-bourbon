@@ -1,0 +1,53 @@
+{
+  "name": "code-and-bourbon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build && cp dist/index.html dist/404.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.1.4",
+    "sass": "^1.83.4",
+    "vite": "^5.4.10"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-react": "^7.37.4"
+  },
+  "eslintConfig": {
+    "extends": "airbnb",
+    "env": {
+      "es6": true,
+      "browser": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 2022,
+      "sourceType": "module"
+    },
+    "rules": {
+      "max-len": 0,
+      "react/prop-types": 0,
+      "react/no-unescaped-entities": 0,
+      "object-curly-newline": 0,
+      "jsx-a11y/control-has-associated-label": 0,
+      "no-console": 0,
+      "no-restricted-globals": 0,
+      "no-param-reassign": 0,
+      "radix": 0,
+      "jsx-a11y/alt-text": 0,
+      "react/no-array-index-key": 0,
+      "no-unsafe-optional-chaining": 0,
+      "consistent-return": 0
+    }
+  }
+}
