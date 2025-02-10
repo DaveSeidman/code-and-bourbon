@@ -1,8 +1,39 @@
+@font-face {
+  font-family: 'Oufit';
+  src: url('assets/fonts/outfit.ttf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Atkinson';
+  src: url('assets/fonts/atkinson.ttf') format('opentype');
+}
+
 html, body {
   margin: 0;
 }
 
 .app {
+
+  font-family: 'Outfit';
+  font-size: 16px;
+  
+  h1, h2, h3 {
+    margin: 1rem;
+    text-align: center;
+  }
+
+  h1 {
+    font-family: 'Atkinson';
+    font-weight: 600;
+    font-size: 1rem;
+    &:before { content: '<'}
+    &:after { content: '/>'}
+  }
+
+  p {
+    margin: 1rem;
+    line-height: 1.75rem;
+  }
 
   .header {
     width: 100%;
@@ -15,9 +46,24 @@ html, body {
     background-size: cover;
     background-position: center;
     margin: 0;
+    position: relative;
+
+    &:before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+    }
 
     &-logo {
+      position: absolute;
       max-width: 50vw;
+    }
+  }
+
+  .pages {
+    &-page {
+      margin-bottom: 3rem;
     }
   }
 }

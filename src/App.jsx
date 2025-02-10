@@ -16,6 +16,29 @@ export default function App() {
               <div className="header">
                 <img className="header-logo" src={logo} />
               </div>
+              <div className="pages">
+                <div className="pages-page who">
+                  <h1>Who We Are</h1>
+                  <p>We are a group of like-minded individuals, mostly in NYC, that are reclaiming the post-work happy hour we lost during the pandemic. Most of us enjoy Bourbon but it's not at all a requirement, but more of a suggestion that our meetups ecourage a relaxed environment where natural creativity and networking opportinities.</p>
+                </div>
+                <div className="pages-page where">
+                  <h1>Where to Find Us</h1>
+                  <p>We meet in various bars and coworking spaces in Brooklyn and Manhattan on a monthly basis.</p>
+                  <p>Join the Discord server here to stay up to date.</p>
+
+                </div>
+                <div className="pages-page history">
+                  <h1>History</h1>
+                  <ul>
+                    <li>Jan 2024: Windsor Terrace</li>
+                    <li>Feb 2024: Dumbo</li>
+                    <li>Mar 2024: Gowanus</li>
+                    <li>May 2024:  Williamsburg</li>
+                    <li>Jun 2024:  Windsor Terrace</li>
+                    <li>Sep 2024: Park Slope</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           )}
         />
