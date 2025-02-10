@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useParams, useNavigate } from 'react-router-dom';
+import headerImg from './assets/images/header.png';
 import logo from './assets/images/logo.svg';
 import './index.scss';
 
@@ -14,6 +15,9 @@ export default function App() {
           element={(
             <div className="app">
               <div className="header">
+                <div className="header-image">
+                  <img src={headerImg} />
+                </div>
                 <img className="header-logo" src={logo} />
               </div>
               <div className="pages">
