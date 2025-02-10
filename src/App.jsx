@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useParams, useNavigate } from 'react-router-dom';
+import logo from './assets/images/logo.svg';
 import './index.scss';
 
 export default function App() {
@@ -12,7 +13,9 @@ export default function App() {
           path="/:page?"
           element={(
             <div className="app">
-              <h1>🥃 Code & Bourbon</h1>
+              <div className="header">
+                <img className="header-logo" src={logo} />
+              </div>
             </div>
           )}
         />
