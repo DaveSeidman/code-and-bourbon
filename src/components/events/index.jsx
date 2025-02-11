@@ -3,7 +3,7 @@ import eventData from '../../assets/data/events.json';
 import './index.scss';
 
 export default function Events() {
-  const formatDate = (dateString) => new Date(dateString).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const formatDate = (dateString) => new Date(`${dateString}T00:00:00Z`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
   const sortedEvents = eventData.sort((a, b) => (a.date > b.date ? -1 : 1));
 

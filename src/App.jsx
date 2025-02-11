@@ -1,122 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import axios from 'axios';
 import Hero from './components/hero';
 import Events from './components/events';
+import User from './components/user';
 import './index.scss';
-
-// Determine backend URL based on environment
-const BACKEND_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:3000'
-  : 'https://code-and-bourbon-back.onrender.com';
 
 export default function App() {
   const basePath = import.meta.env.BASE_URL || '/';
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    axios.get(`${BACKEND_URL}/auth/user`, { withCredentials: true })
-      .then((response) => {
-        setUser(response.data);
-      })
-      .catch(() => {
-        setUser(null);
-      });
-
-    // Listen for login event from popup
-    window.addEventListener('message', (event) => {
-      if (event.origin !== BACKEND_URL) return;
-      if (event.data?.type === 'oauth-success') {
-        setUser(event.data.user);
-      }
-    });
-  }, []);
-
-  const login = () => {
-    // const width = 500;
-    // const height = 600;
-    // const left = window.screen.width / 2 - width / 2;
-    // const top = window.screen.height / 2 - height / 2;
-
-    // const loginWindow = window.open(
-    //   `${BACKEND_URL}/auth/google`,
-    //   'Google Login',
-    //   `width=${width},height=${height},top=${top},left=${left}`,
-    // );
-
-    // Poll the window state and listen for completion
-    // const interval = setInterval(() => {
-    //   if (!loginWindow || loginWindow.closed) {
-    //     clearInterval(interval);
-    //     axios.get(`${BACKEND_URL}/auth/user`, { withCredentials: true })
-    //       .then((response) => setUser(response.data))
-    //       .catch(() => setUser(null));
-    //   }
-    // }, 1000);
-
-    window.location.href = `${BACKEND_URL}/auth/google`;
-  };
-
-  const handleLogout = () => {
-    axios.get(`${BACKEND_URL}/auth/logout`, { withCredentials: true })
-      .then(() => {
-        setUser(null);
-      })
-      .catch((err) => {
-        console.error('Logout failed', err);
-      });
-  };
-
-  const checkSession = () => {
-    axios.get(`${BACKEND_URL}/auth/debug-session`, { widthCredentials: true }).then((res) => console.log(res));
-  };
-
-  const getUser = () => {
-    // axios.get(`${BACKEND_URL}/auth/user`, { widthCredentials: true }).then((res) => console.log(res));
-    axios.get(`${BACKEND_URL}/auth/user`, { withCredentials: true })
-      .then((response) => setUser(response.data))
-      .catch(() => setUser(null));
-  };
 
   return (
     <Router basename={basePath}>
-      <Routes>
-        <Route
-          path="/:page?"
-          element={(
-            <div className="app">
-              <Hero />
-              <div className="pages">
-                <div className="pages-page who">
-                  <h1>WhoWeAre</h1>
-                  <p>We are a group of like-minded individuals, mostly in NYC, that are reclaiming the post-work happy hour we lost during the pandemic. Most of us enjoy Bourbon but it's not at all a requirement, but more of a suggestion that our meetups encourage a relaxed environment where natural creativity and networking opportunities.</p>
-                </div>
-                <Events />
-                <div className="pages-page join">
-                  <h1>OneOfUsOneOfUs</h1>
-                  <a href="https://discord.gg/v68Dv4vVBA" target="discord">Join Us on Discord!</a>
-                  <p>You'll receive information about how to join us in person at the next meetup!</p>
-                </div>
-              </div>
-              <div className="login">
+      <div className="app">
 
-                <div>
-                  <p>
-                    Welcome,
-                    {user?.displayName}
-                  </p>
-                  <img src={user?.profilePicture} alt="Profile" width="50" />
-                  <button onClick={handleLogout}>Logout</button>
-                </div>
+        <Routes>
 
-                <button onClick={login}>Login with Google</button>
-                <button onClick={checkSession}>check session</button>
-                <button onClick={getUser}>get user</button>
-              </div>
-            </div>
-          )}
-        />
-      </Routes>
+          <Route
+            path="/:page?"
+            element={(
+              <>
+                <Hero />
+                <div className="pages">
+                  <div className="pages-page who">
+                    <h1>WhoWeAre</h1>
+                    <p>We are a group of like-minded individuals, mostly in NYC, that are reclaiming the post-work happy hour we lost during the pandemic. Most of us enjoy Bourbon but it's not at all a requirement, but more of a suggestion that our meetups encourage a relaxed environment where natural creativity and networking opportunities.</p>
+                  </div>
+                  <Events />
+                  <div className="pages-page join">
+                    <h1>OneOfUsOneOfUs</h1>
+                    <a href="https://discord.gg/v68Dv4vVBA" target="discord">Join Us on Discord!</a>
+                    <p>You'll receive information about how to join us in person at the next meetup!</p>
+                  </div>
+                </div>
+                <User />
+              </>
+            )}
+          />
+          <Route
+            path="/page1"
+            element={
+              <div className="app2" />
+            }
+          />
+        </Routes>
+      </div>
+
     </Router>
   );
 }

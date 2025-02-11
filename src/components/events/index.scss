@@ -9,14 +9,20 @@
     position: relative;
     width: calc(100% - 4rem);
     height: 300px;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
 
     h3 {
       margin: 1rem 0 !important;
     }
 
     &:nth-child(2n) {
+      &:after {
+        content: '>';
+        transform: translateX(35%);
+      }
+
       .events-event {
+       
         &-content {
           left: calc(50% + 3rem);
           text-align: left;
@@ -41,24 +47,24 @@
     &:before {
       content: '';
       width: 1rem;
-      background: black;
-      height: calc(100% + 2rem);
+      background: linear-gradient(180deg, black 88.5%, white 88.5%, white 91%, black 91%);
+      height: calc(100% + 2.5rem);
       position: absolute;
       left: 50%;
       // top: 3rem;
       transform: translateX(-50%);
     }
     &:after {
-      content: '< >';
+      content: '<';
       position: absolute;
       top: 0;
       left: 50%;
       font-size: 3rem;
-      line-height: 3rem;
+      line-height: 3.25rem;
       font-weight: 900;
       letter-spacing: .5rem;
-      margin-left: .25rem;
-      transform: translateX(-50%);
+      // margin-left: .25rem;
+      transform: translateX(-115%);
     }
 
     &-content, &-banner {
@@ -77,7 +83,8 @@
     }
 
     &-banner {
-      left: calc(50% + 3rem);
+      left: calc(50% + 1rem);
+      width: calc(50% - 1rem);
     
       &-fade {
         position: absolute;
