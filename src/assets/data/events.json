@@ -5,23 +5,23 @@
     "location": {
       "name": "The Home Collective",
       "nrighborhood": "Winsor Terrace",
-      "map": "https://goo.gl/maps/xyz123"
+      "map": "https://maps.app.goo.gl/VSggM9uEm4yMDbWd9"
     },
     "theme": "Hello World!",
-    "description": "The first round kicks off in Windsor Terrace, setting the stage for an exciting series.",
-    "image": "https://example.com/images/round1.jpg"
+    "description": "Our inaugural meetup! We met each other IRL, ate cheese and crackers, talked a bit about code and of course enjoyed some good bourbon.",
+    "photo": "round1.png"
   },
   {
     "id": "asdlkj23naskj",
     "date": "2024-02-29",
     "location": {
-      "name": "WoodyDevs",
+      "name": "Woody Devs",
       "nrighborhood": "Dumbo",
-      "map": "https://goo.gl/maps/xyz456"
+      "map": "https://maps.app.goo.gl/RqU1hSBCENHsqSYw6"
     },
     "theme": "Struggles Against Time",
-    "description": "A special Leap Day event in Dumbo, bringing new challenges and surprises.",
-    "image": "https://example.com/images/round2.jpg"
+    "description": "A special Leap Day event, we got togther to talk about time: how to manage it, when it gets away from you, and of course some round-by-zeros errors.",
+    "photo": "round2.png"
   },
   {
     "id": "akj23nasdflkj",
@@ -29,11 +29,11 @@
     "location": {
       "name": "Gowanus Creative Studios",
       "nrighborhood": "The Gowanus",
-      "map": "https://goo.gl/maps/xyz789"
+      "map": "https://maps.app.goo.gl/gDn9ztSYS5uRDcrt6"
     },
-    "theme": "Round 3",
+    "theme": "Code IRL: Hardware",
     "description": "Round 3 moves to Gowanus, featuring an industrial backdrop and creative energy.",
-    "image": "https://example.com/images/round3.jpg"
+    "photo": "round3.png"
   },
   {
     "id": "asdlkj23nasflkj",
@@ -41,11 +41,11 @@
     "location": {
       "name": "The Woods",
       "nrighborhood": "Williamsburg",
-      "map": "https://goo.gl/maps/xyz101"
+      "map": "https://maps.app.goo.gl/mGLUVuwwp88otpyB6"
     },
-    "theme": "Round 4",
-    "description": "A springtime round in Williamsburg, known for its vibrant arts and music scene.",
-    "image": "https://example.com/images/round4.jpg"
+    "theme": "Into the Woods!",
+    "description": "Phil taught us not to fear Shadow Monsters with an updated version of his world-famous Moma installtion",
+    "photo": "round4.png"
   },
   {
     "id": "asdlkasdflkj",
@@ -53,11 +53,11 @@
     "location": {
       "name": "The Home Collective",
       "neighborhood": "Windsor Terrace",
-      "map": "https://goo.gl/maps/xyz112"
+      "map": "https://maps.app.goo.gl/VSggM9uEm4yMDbWd9"
     },
-    "theme": "Round 5",
-    "description": "Returning to Windsor Terrace for Round 5, embracing familiar energy with new twists.",
-    "image": "https://example.com/images/round5.jpg"
+    "theme": "Fun and Games!",
+    "description": "We learned about one coders journey to meeting the inventor of the Rubik's Cube for an interactive Google Doodle",
+    "photo": "round5.png"
   },
   {
     "id": "asdlkj23asdkj",
@@ -65,11 +65,11 @@
     "location": {
       "name": "Chela",
       "neighborhood": "Park Slope",
-      "map": "https://goo.gl/maps/xyz131"
+      "map": "https://maps.app.goo.gl/DHUbgRkDufyD18vN8"
     },
     "theme": "When AI Goes Awry",
-    "description": "Closing out the series in Park Slope with a grand finale to remember.",
-    "image": "https://example.com/images/round6.jpg"
+    "description": "Will AI eat all our lunch? Maybe! Let's talk about it. In this session we heard from ...",
+    "photo": "round6.png"
   },
   {
     "id": "asdlas23nasdflkj",
@@ -77,10 +77,10 @@
     "location": {
       "name": "TBD",
       "neighborhood": "Park Slope",
-      "map": "https://goo.gl/maps/xyz131"
+      "map": "https://maps.app.goo.gl/29i1B4JcQo3MhbFK8"
     },
     "theme": "Trying Something New",
     "description": "Closing out the series in Park Slope with a grand finale to remember.",
-    "image": "https://example.com/images/round6.jpg"
+    "photo": "round7.png"
   }
 ]

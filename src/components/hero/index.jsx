@@ -30,6 +30,7 @@ export default function Hero() {
   }, []);
 
   useEffect(() => {
+    if (!height) return;
     // console.log(width, height);
     const nextSize = height / 10;
     setSize(nextSize);
@@ -39,11 +40,11 @@ export default function Hero() {
   }, [width, height]);
 
   useEffect(() => {
-    setCells(new Array(arrayLength).fill(null).map((_, index) => ({
+    setCells(new Array(arrayLength || 1).fill(null).map((_, index) => ({
       id: `cell-${index}`,
       active: false,
-      top: Math.floor(index / (Math.ceil(width / size))) * size,
-      left: (index % Math.ceil(width / size)) * size,
+      top: height ? Math.floor(index / (Math.ceil(width / size))) * size : 0,
+      left: height ? (index % Math.ceil(width / size)) * size : 0,
       char: Math.round(Math.random()),
     })));
   }, [arrayLength]);
