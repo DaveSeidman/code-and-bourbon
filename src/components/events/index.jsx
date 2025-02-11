@@ -19,11 +19,6 @@ export default function Events() {
               key={data.id}
               className={`events-event ${featured ? 'featured' : ''}`}
             >
-              <div className="events-event-content">
-                <h3>{formatDate(data.date)}</h3>
-                <p>{data.description}</p>
-                <a href={data.location.map} target="map">{data.location.name}</a>
-              </div>
               <div className="events-event-banner">
                 <img src={data.photo} />
                 <div className="events-event-banner-fade" />
@@ -32,6 +27,11 @@ export default function Events() {
                   <span className="bold">{data.theme}</span>
                 </h3>
                 {featured && <button type="button">Sign Up!</button>}
+              </div>
+              <div className="events-event-content">
+                <h3>{formatDate(data.date)}</h3>
+                <p>{data.description}</p>
+                <a href={data.location.map} target="map">{data.location.name}</a>
               </div>
             </div>
           );
