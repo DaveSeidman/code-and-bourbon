@@ -13,11 +13,13 @@ export default function Events() {
             key={data.id}
             className="events-event"
           >
-            <h3>{title}</h3>
-            <p>{data.date}</p>
-            <p>{data.description}</p>
-            <a href={data.location.map} target="map">{data.location.name}</a>
-            <img src={data.photo} />
+            <div className="events-event-content">
+              <h3>{title}</h3>
+              <p>{data.date}</p>
+              <p>{data.description}</p>
+              <a href={data.location.map} target="map">{data.location.name}</a>
+              <img src={data.photo} />
+            </div>
           </div>
         );
       })}
