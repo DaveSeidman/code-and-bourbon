@@ -32,27 +32,29 @@ export default function App() {
     });
   }, []);
 
-  const openLoginPopup = () => {
-    const width = 500;
-    const height = 600;
-    const left = window.screen.width / 2 - width / 2;
-    const top = window.screen.height / 2 - height / 2;
+  const login = () => {
+    // const width = 500;
+    // const height = 600;
+    // const left = window.screen.width / 2 - width / 2;
+    // const top = window.screen.height / 2 - height / 2;
 
-    const loginWindow = window.open(
-      `${BACKEND_URL}/auth/google`,
-      'Google Login',
-      `width=${width},height=${height},top=${top},left=${left}`,
-    );
+    // const loginWindow = window.open(
+    //   `${BACKEND_URL}/auth/google`,
+    //   'Google Login',
+    //   `width=${width},height=${height},top=${top},left=${left}`,
+    // );
 
     // Poll the window state and listen for completion
-    const interval = setInterval(() => {
-      if (!loginWindow || loginWindow.closed) {
-        clearInterval(interval);
-        axios.get(`${BACKEND_URL}/auth/user`, { withCredentials: true })
-          .then((response) => setUser(response.data))
-          .catch(() => setUser(null));
-      }
-    }, 1000);
+    // const interval = setInterval(() => {
+    //   if (!loginWindow || loginWindow.closed) {
+    //     clearInterval(interval);
+    //     axios.get(`${BACKEND_URL}/auth/user`, { withCredentials: true })
+    //       .then((response) => setUser(response.data))
+    //       .catch(() => setUser(null));
+    //   }
+    // }, 1000);
+
+    window.location.href = `${BACKEND_URL}/auth/google`;
   };
 
   const handleLogout = () => {
@@ -63,6 +65,17 @@ export default function App() {
       .catch((err) => {
         console.error('Logout failed', err);
       });
+  };
+
+  const checkSession = () => {
+    axios.get(`${BACKEND_URL}/auth/debug-session`, { widthCredentials: true }).then((res) => console.log(res));
+  };
+
+  const getUser = () => {
+    // axios.get(`${BACKEND_URL}/auth/user`, { widthCredentials: true }).then((res) => console.log(res));
+    axios.get(`${BACKEND_URL}/auth/user`, { withCredentials: true })
+      .then((response) => setUser(response.data))
+      .catch(() => setUser(null));
   };
 
   return (
@@ -86,18 +99,19 @@ export default function App() {
                 </div>
               </div>
               <div className="login">
-                {user ? (
-                  <div>
-                    <p>
-                      Welcome,
-                      {user.displayName}
-                    </p>
-                    <img src={user.profilePicture} alt="Profile" width="50" />
-                    <button onClick={handleLogout}>Logout</button>
-                  </div>
-                ) : (
-                  <button onClick={openLoginPopup}>Login with Google</button>
-                )}
+
+                <div>
+                  <p>
+                    Welcome,
+                    {user?.displayName}
+                  </p>
+                  <img src={user?.profilePicture} alt="Profile" width="50" />
+                  <button onClick={handleLogout}>Logout</button>
+                </div>
+
+                <button onClick={login}>Login with Google</button>
+                <button onClick={checkSession}>check session</button>
+                <button onClick={getUser}>get user</button>
               </div>
             </div>
           )}
