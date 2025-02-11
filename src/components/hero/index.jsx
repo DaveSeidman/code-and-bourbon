@@ -8,7 +8,7 @@ import './index.scss';
 
 export default function Hero() {
   const rem = 16;
-  const size = 60;
+  const size = 30;
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const [arrayLength, setArrayLength] = useState(0);
@@ -42,6 +42,7 @@ export default function Hero() {
       active: false,
       top: Math.floor(index / (Math.ceil(width / size))) * size,
       left: (index % Math.ceil(width / size)) * size,
+      char: Math.round(Math.random()),
     })));
   }, [arrayLength]);
 
@@ -72,7 +73,7 @@ export default function Hero() {
                 setTimeout(() => { e.target.classList.remove('active'); }, 2000);
               }}
             >
-              •
+              {cell.char}
             </span>
           ))
         }

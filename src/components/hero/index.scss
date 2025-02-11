@@ -26,14 +26,14 @@
 
     &-cell {
       position: absolute;
-      background: black;
-      color: white;
+      background: rgb(0, 255, 0);
+      color: black;
       text-align:center;
       opacity: 0;
-      mix-blend-mode: darken;
+      mix-blend-mode:difference;
       transition: opacity .5s;
       user-select: none;
-
+      font-family: 'Atkinson';
       &.active {
         opacity: 1;
       }
