@@ -26,12 +26,16 @@
 
     &-cell {
       position: absolute;
-      background: white;
+      background: black;
+      color: white;
+      text-align:center;
       opacity: 0;
+      mix-blend-mode: darken;
       transition: opacity .5s;
+      user-select: none;
 
       &.active {
-        opacity: .5;
+        opacity: 1;
       }
     }
   }

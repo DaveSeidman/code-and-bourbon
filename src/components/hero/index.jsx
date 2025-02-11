@@ -37,17 +37,12 @@ export default function Hero() {
   }, [width, height]);
 
   useEffect(() => {
-    setCells(new Array(arrayLength).fill(null).map((_, index) => {
-      const cols = Math.ceil(width / size);
-      const rows = Math.ceil(height / size);
-      console.log('left', index, cols, index % cols);
-      return ({
-        id: `cell-${index}`,
-        active: false,
-        top: Math.floor(index / cols) * size,
-        left: (index % cols) * size,
-      });
-    }));
+    setCells(new Array(arrayLength).fill(null).map((_, index) => ({
+      id: `cell-${index}`,
+      active: false,
+      top: Math.floor(index / (Math.ceil(width / size))) * size,
+      left: (index % Math.ceil(width / size)) * size,
+    })));
   }, [arrayLength]);
 
   return (
@@ -69,12 +64,16 @@ export default function Hero() {
                 left: cell.left,
                 width: size,
                 height: size,
+                fontSize: size,
+                lineHeight: `${size}px`,
               }}
               onPointerMove={(e) => {
                 e.target.classList.add('active');
                 setTimeout(() => { e.target.classList.remove('active'); }, 2000);
               }}
-            />
+            >
+              •
+            </span>
           ))
         }
       </div>
