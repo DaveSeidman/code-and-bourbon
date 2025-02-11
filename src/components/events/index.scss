@@ -52,7 +52,17 @@
       }
     }
 
+    &.featured-bak {
+      width: 1000px;
+      height: 710px;
 
-   
+      .events-event-content {
+        left: 0;
+        img { 
+          left: 0;
+        }
+      }
+      // left: 0;
+    }
   }
 }
