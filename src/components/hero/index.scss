@@ -28,8 +28,9 @@
       position: absolute;
       background: rgb(0, 255, 0);
       color: black;
-      text-align:center;
+      text-align: center;
       opacity: 0;
+      transform: scale(.95);
       mix-blend-mode:difference;
       transition: opacity .5s;
       user-select: none;
