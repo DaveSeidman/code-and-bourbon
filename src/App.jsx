@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Hero from './components/hero';
 import Events from './components/events';
 import User from './components/user';
+import Footer from './components/footer';
 import './index.scss';
 
 export default function App() {
@@ -31,7 +32,9 @@ export default function App() {
                     <p>You'll receive information about how to join us in person at the next meetup!</p>
                   </div>
                 </div>
+                <Footer />
                 <User />
+
               </>
             )}
           />
