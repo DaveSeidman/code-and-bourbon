@@ -1,0 +1,86 @@
+[
+  {
+    "id": "asdlkj23flkj",
+    "date": "2024-01-18",
+    "location": {
+      "name": "The Home Collective",
+      "nrighborhood": "Winsor Terrace",
+      "map": "https://goo.gl/maps/xyz123"
+    },
+    "theme": "Hello World!",
+    "description": "The first round kicks off in Windsor Terrace, setting the stage for an exciting series.",
+    "image": "https://example.com/images/round1.jpg"
+  },
+  {
+    "id": "asdlkj23naskj",
+    "date": "2024-02-29",
+    "location": {
+      "name": "WoodyDevs",
+      "nrighborhood": "Dumbo",
+      "map": "https://goo.gl/maps/xyz456"
+    },
+    "theme": "Struggles Against Time",
+    "description": "A special Leap Day event in Dumbo, bringing new challenges and surprises.",
+    "image": "https://example.com/images/round2.jpg"
+  },
+  {
+    "id": "akj23nasdflkj",
+    "date": "2024-03-28",
+    "location": {
+      "name": "Gowanus Creative Studios",
+      "nrighborhood": "The Gowanus",
+      "map": "https://goo.gl/maps/xyz789"
+    },
+    "theme": "Round 3",
+    "description": "Round 3 moves to Gowanus, featuring an industrial backdrop and creative energy.",
+    "image": "https://example.com/images/round3.jpg"
+  },
+  {
+    "id": "asdlkj23nasflkj",
+    "date": "2024-05-16",
+    "location": {
+      "name": "The Woods",
+      "nrighborhood": "Williamsburg",
+      "map": "https://goo.gl/maps/xyz101"
+    },
+    "theme": "Round 4",
+    "description": "A springtime round in Williamsburg, known for its vibrant arts and music scene.",
+    "image": "https://example.com/images/round4.jpg"
+  },
+  {
+    "id": "asdlkasdflkj",
+    "date": "2024-06-20",
+    "location": {
+      "name": "The Home Collective",
+      "neighborhood": "Windsor Terrace",
+      "map": "https://goo.gl/maps/xyz112"
+    },
+    "theme": "Round 5",
+    "description": "Returning to Windsor Terrace for Round 5, embracing familiar energy with new twists.",
+    "image": "https://example.com/images/round5.jpg"
+  },
+  {
+    "id": "asdlkj23asdkj",
+    "date": "2024-09-26",
+    "location": {
+      "name": "Chela",
+      "neighborhood": "Park Slope",
+      "map": "https://goo.gl/maps/xyz131"
+    },
+    "theme": "When AI Goes Awry",
+    "description": "Closing out the series in Park Slope with a grand finale to remember.",
+    "image": "https://example.com/images/round6.jpg"
+  },
+  {
+    "id": "asdlas23nasdflkj",
+    "date": "2025-02-27",
+    "location": {
+      "name": "TBD",
+      "neighborhood": "Park Slope",
+      "map": "https://goo.gl/maps/xyz131"
+    },
+    "theme": "Trying Something New",
+    "description": "Closing out the series in Park Slope with a grand finale to remember.",
+    "image": "https://example.com/images/round6.jpg"
+  }
+]

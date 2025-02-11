@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useParams, useNavigate } from 'react-router-dom';
-import headerImg from './assets/images/header.png';
 import Hero from './components/hero';
-import logo from './assets/images/logo.svg';
+import Events from './components/events';
 import './index.scss';
 
 export default function App() {
@@ -24,11 +23,12 @@ export default function App() {
               <Hero />
 
               <div className="pages">
-                <div className="pages-page current">
+                <Events />
+                {/* <div className="pages-page current">
                   <h1>JoinUs</h1>
                   <p>The next meetup is scheduled for February 27th 2025</p>
                   <p>Click here to register</p>
-                </div>
+                </div> */}
                 <div className="pages-page who">
                   <h1>WhoWeAre</h1>
                   <p>We are a group of like-minded individuals, mostly in NYC, that are reclaiming the post-work happy hour we lost during the pandemic. Most of us enjoy Bourbon but it's not at all a requirement, but more of a suggestion that our meetups ecourage a relaxed environment where natural creativity and networking opportinities.</p>

@@ -8,7 +8,7 @@ import './index.scss';
 
 export default function Hero() {
   const rem = 16;
-  const size = 30;
+  const [size, setSize] = useState(100);
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
   const [arrayLength, setArrayLength] = useState(0);
@@ -31,8 +31,10 @@ export default function Hero() {
 
   useEffect(() => {
     // console.log(width, height);
-    const cols = Math.ceil(width / size);
-    const rows = Math.ceil(height / size);
+    const nextSize = height / 10;
+    setSize(nextSize);
+    const cols = Math.ceil(width / nextSize);
+    const rows = Math.ceil(height / nextSize);
     setArrayLength(cols * rows);
   }, [width, height]);
 
