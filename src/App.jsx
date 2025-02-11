@@ -5,12 +5,17 @@ import Hero from './components/hero';
 import Events from './components/events';
 import './index.scss';
 
+// Determine backend URL based on environment
+const BACKEND_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:3000'
+  : 'https://code-and-bourbon-back.onrender.com';
+
 export default function App() {
   const basePath = import.meta.env.BASE_URL || '/';
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:3000/auth/user', { withCredentials: true })
+    axios.get(`${BACKEND_URL}/auth/user`, { withCredentials: true })
       .then((response) => {
         setUser(response.data);
       })
@@ -20,7 +25,7 @@ export default function App() {
 
     // Listen for login event from popup
     window.addEventListener('message', (event) => {
-      if (event.origin !== 'http://localhost:3000') return; // Adjust for production
+      if (event.origin !== BACKEND_URL) return;
       if (event.data?.type === 'oauth-success') {
         setUser(event.data.user);
       }
@@ -34,7 +39,7 @@ export default function App() {
     const top = window.screen.height / 2 - height / 2;
 
     const loginWindow = window.open(
-      'http://localhost:3000/auth/google',
+      `${BACKEND_URL}/auth/google`,
       'Google Login',
       `width=${width},height=${height},top=${top},left=${left}`,
     );
@@ -43,7 +48,7 @@ export default function App() {
     const interval = setInterval(() => {
       if (!loginWindow || loginWindow.closed) {
         clearInterval(interval);
-        axios.get('http://localhost:3000/auth/user', { withCredentials: true })
+        axios.get(`${BACKEND_URL}/auth/user`, { withCredentials: true })
           .then((response) => setUser(response.data))
           .catch(() => setUser(null));
       }
@@ -51,7 +56,7 @@ export default function App() {
   };
 
   const handleLogout = () => {
-    axios.get('http://localhost:3000/auth/logout', { withCredentials: true })
+    axios.get(`${BACKEND_URL}/auth/logout`, { withCredentials: true })
       .then(() => {
         setUser(null);
       })
