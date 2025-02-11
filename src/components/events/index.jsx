@@ -3,11 +3,13 @@ import eventData from '../../assets/data/events.json';
 import './index.scss';
 
 export default function Events() {
+  const sortedEvents = eventData.sort((a, b) => (a.date > b.date ? -1 : 1));
+
   return (
     <div className="events">
       <h1>Events</h1>
-      {eventData.map((data, index) => {
-        const title = `🥃 Round ${index + 1}: ${data.theme}`;
+      {sortedEvents.map((data, index) => {
+        const title = `🥃 Round ${sortedEvents.length - index}: ${data.theme}`;
         return (
           <div
             key={data.id}

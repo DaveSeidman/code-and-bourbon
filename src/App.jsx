@@ -23,29 +23,11 @@ export default function App() {
               <Hero />
 
               <div className="pages">
-                <Events />
-                {/* <div className="pages-page current">
-                  <h1>JoinUs</h1>
-                  <p>The next meetup is scheduled for February 27th 2025</p>
-                  <p>Click here to register</p>
-                </div> */}
                 <div className="pages-page who">
                   <h1>WhoWeAre</h1>
                   <p>We are a group of like-minded individuals, mostly in NYC, that are reclaiming the post-work happy hour we lost during the pandemic. Most of us enjoy Bourbon but it's not at all a requirement, but more of a suggestion that our meetups ecourage a relaxed environment where natural creativity and networking opportinities.</p>
                 </div>
-                <div className="pages-page where">
-                  <h1>WhereWeAre</h1>
-                  <p>We meet in various bars and coworking spaces in Brooklyn and Manhattan on a monthly basis.</p>
-                  <ul>
-                    <li>Jan 2024: Windsor Terrace</li>
-                    <li>Feb 2024: Dumbo</li>
-                    <li>Mar 2024: Gowanus</li>
-                    <li>May 2024:  Williamsburg</li>
-                    <li>Jun 2024:  Windsor Terrace</li>
-                    <li>Sep 2024: Park Slope</li>
-                  </ul>
-                  <p>Join the Discord server here to stay up to date.</p>
-                </div>
+                <Events />
                 <div className="pages-page join">
                   <h1>OneOfUsOneOfUs</h1>
                   <p>Join us by setting up a profile here: link</p>
