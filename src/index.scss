@@ -10,6 +10,7 @@
 
 html, body {
   margin: 0;
+  overflow-x: hidden;
 }
 
 .app {
@@ -37,13 +38,7 @@ html, body {
     &:after { content: '/>'}
   }
 
-  p, ul {
-    font-family: 'Outfit';
-    margin: 2rem auto;
-    line-height: 1.75rem;
-    width: calc(100% - 4rem);
-    max-width: calc(1000px + 2rem);
-  }
+  a { color: black; }
 
   .header {
     width: 100%;
@@ -80,8 +75,18 @@ html, body {
   }
 
   .pages {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
     &-page {
       margin-bottom: 3rem;
+      p, ul {
+        font-family: 'Outfit';
+        margin: 2rem auto;
+        line-height: 1.75rem;
+        width: calc(100% - 4rem);
+        max-width: calc(1000px + 2rem);
+      }
     }
   }
 }
