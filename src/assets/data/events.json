@@ -1,6 +1,5 @@
 [
   {
-    "id": "asdlkj23flkj",
     "date": "2024-01-18",
     "location": {
       "name": "The Home Collective",
@@ -12,7 +11,6 @@
     "photo": "round1.png"
   },
   {
-    "id": "asdlkj23naskj",
     "date": "2024-02-29",
     "location": {
       "name": "Woody Devs",
@@ -20,11 +18,10 @@
       "map": "https://maps.app.goo.gl/RqU1hSBCENHsqSYw6"
     },
     "theme": "Struggles Against Time",
-    "description": "A special Leap Day event, we got togther to talk about time: how to manage it, when it gets away from you, and of course some round-by-zeros errors. \n <a href='https://www.woodydevs.com/' target='_blank'>Woody</a>, our host, strapped into a live motion capture suit and demoed his Unity Rig. Chris walked us through how he recently began his path to becoming a web developer. ",
+    "description": "A special Leap Day event, we got togther to talk about time: how to manage it, when it gets away from you, and of course some round-by-zeros errors. \n <a href='https://www.woodydevs.com/' target='_blank'>Woody</a>, our host, strapped into a live motion capture suit and demoed his Unity Rig. Chris walked us through how he recently began his path to becoming a web developer. Eric gave a talk on a project timeline gone horribly wrong, and...",
     "photo": "round2.png"
   },
   {
-    "id": "akj23nasdflkj",
     "date": "2024-03-28",
     "location": {
       "name": "Gowanus Creative Studios",
@@ -32,11 +29,10 @@
       "map": "https://maps.app.goo.gl/gDn9ztSYS5uRDcrt6"
     },
     "theme": "Code IRL: Hardware",
-    "description": "Josh hosted us in Gowanus Studio and Dave flew back from a gig just in time, on his birthday no less! We started the session by each sharing the best thing we've ever _broken_. We learned about the slime museum that Josh's",
+    "description": "Josh hosted us in Gowanus Studio and Dave flew back from a gig just in time, on his birthday no less! We started the session by each sharing the best thing we've ever _broken_. We learned about the slime vending machines Josh's company created, ",
     "photo": "round3.png"
   },
   {
-    "id": "asdlkj23nasflkj",
     "date": "2024-05-16",
     "location": {
       "name": "The Woods",
@@ -44,11 +40,10 @@
       "map": "https://maps.app.goo.gl/mGLUVuwwp88otpyB6"
     },
     "theme": "Into the Woods!",
-    "description": "Phil taught us not to be afraid of monsters with an updated version of his \"Shadow Monsters\" installtion that's been on view at the Moma and other museums around the world",
+    "description": "Phil taught us not to be afraid of monsters with an updated version of his \"Shadow Monsters\" installtion that's been on view at the Moma and other museums around the world. We had great refreshments from an on-site taco truck, and of course, a healthy amount of Bourbon!",
     "photo": "round4.png"
   },
   {
-    "id": "asdlkasdflkj",
     "date": "2024-06-20",
     "location": {
       "name": "The Home Collective",
@@ -56,11 +51,10 @@
       "map": "https://maps.app.goo.gl/VSggM9uEm4yMDbWd9"
     },
     "theme": "Fun and Games!",
-    "description": "We learned about one coders journey to meeting the inventor of the Rubik's Cube for an interactive Google Doodle",
+    "description": "We learned about one coders journey to meeting the inventor of the Rubik's Cube for an interactive Google Doodle. Djenia's journey creating his super-fun and interactive portfolio website.",
     "photo": "round5.png"
   },
   {
-    "id": "asdlkj23asdkj",
     "date": "2024-09-26",
     "location": {
       "name": "Chela",
@@ -72,7 +66,6 @@
     "photo": "round6.png"
   },
   {
-    "id": "asdlas23nasdflkj",
     "date": "2025-02-27",
     "location": {
       "name": "TBD",

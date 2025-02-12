@@ -54,7 +54,7 @@ export default function User() {
           <button type="button" onClick={logout}>Logout</button>
         </div>
       ) : (
-        <button type="button" onClick={login}>Login with Google</button>)}
+        <button type="button" onClick={login}>Login</button>)}
     </div>
   );
 }
