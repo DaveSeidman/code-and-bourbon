@@ -16,7 +16,7 @@ export default function Events() {
       <h1>Events</h1>
       <div className="events">
         {sortedEvents.map((data, index) => {
-          const prefix = `🥃 Round ${sortedEvents.length - index}:`;
+          const prefix = `Round ${sortedEvents.length - index} 🥃 `;
           const featured = new Date(data.date) > new Date();
           return (
             <div
@@ -24,18 +24,22 @@ export default function Events() {
               className={`events-event ${featured ? 'featured' : ''}`}
             >
               <div className="events-event-banner">
-                <img src={data.photo} />
+                <img src={data.photo} alt={`Event ${data.theme}`} />
                 <div className="events-event-banner-fade" />
                 <h3>
-                  <span>{prefix}</span>
-                  <span className="bold">{data.theme}</span>
+                  <span className="bold">{prefix}</span>
+                  <span className="">{data.theme}</span>
                 </h3>
                 {featured && <button type="button">Sign Up!</button>}
               </div>
               <div className="events-event-content">
-                <h3>{formatDate(data.date)}</h3>
-                <p>{data.description}</p>
-                <a href={data.location.map} target="map">{data.location.name}</a>
+                <h3 className="events-event-content-dateplace">
+                  {formatDate(data.date)} @ <a href={data.location.map} target="map">{data.location.name}</a>
+                </h3>
+                <p
+                  className="events-event-content-description"
+                  dangerouslySetInnerHTML={{ __html: data.description }}
+                />
               </div>
             </div>
           );

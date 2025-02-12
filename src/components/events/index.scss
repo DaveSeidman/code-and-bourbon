@@ -46,7 +46,7 @@
 
     &:before {
       content: '';
-      width: 1rem;
+      width: .75rem;
       background: linear-gradient(180deg, black 88.5%, white 88.5%, white 91%, black 91%);
       height: calc(100% + 2.5rem);
       position: absolute;
@@ -79,6 +79,10 @@
 
       & > h3 {
         text-align: right !important;
+      }
+
+      &-description {
+        line-height: 2rem;
       }
     }
 

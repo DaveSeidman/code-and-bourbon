@@ -4,11 +4,11 @@
     "date": "2024-01-18",
     "location": {
       "name": "The Home Collective",
-      "nrighborhood": "Winsor Terrace",
+      "neighborhood": "Winsor Terrace",
       "map": "https://maps.app.goo.gl/VSggM9uEm4yMDbWd9"
     },
     "theme": "Hello World!",
-    "description": "Our inaugural meetup! We met each other IRL, ate cheese and crackers, talked a bit about code and of course enjoyed some good bourbon.",
+    "description": "Our inaugural meetup! We met each other IRL, ate cheese and crackers, talked a bit about code and of course enjoyed some good bourbon. \n Members shared a bit about themselves, where they're from, how they found their way to coding, and of course, their favorite librations. Dave gave a walkthrough of a <a href='https://daveseidman.github.io/maiz/' target='_blank'>Digital Corn Maze</a> he built. Tom made us go 'wooo' with his painstakingly home made zoetopes. And...",
     "photo": "round1.png"
   },
   {
@@ -16,11 +16,11 @@
     "date": "2024-02-29",
     "location": {
       "name": "Woody Devs",
-      "nrighborhood": "Dumbo",
+      "neighborhood": "Dumbo",
       "map": "https://maps.app.goo.gl/RqU1hSBCENHsqSYw6"
     },
     "theme": "Struggles Against Time",
-    "description": "A special Leap Day event, we got togther to talk about time: how to manage it, when it gets away from you, and of course some round-by-zeros errors.",
+    "description": "A special Leap Day event, we got togther to talk about time: how to manage it, when it gets away from you, and of course some round-by-zeros errors. \n <a href='https://www.woodydevs.com/' target='_blank'>Woody</a>, our host, strapped into a live motion capture suit and demoed his Unity Rig. Chris walked us through how he recently began his path to becoming a web developer. ",
     "photo": "round2.png"
   },
   {
@@ -28,11 +28,11 @@
     "date": "2024-03-28",
     "location": {
       "name": "Gowanus Creative Studios",
-      "nrighborhood": "The Gowanus",
+      "neighborhood": "The Gowanus",
       "map": "https://maps.app.goo.gl/gDn9ztSYS5uRDcrt6"
     },
     "theme": "Code IRL: Hardware",
-    "description": "Round 3 moves to Gowanus, featuring an industrial backdrop and creative energy.",
+    "description": "Josh hosted us in Gowanus Studio and Dave flew back from a gig just in time, on his birthday no less! We started the session by each sharing the best thing we've ever _broken_. We learned about the slime museum that Josh's",
     "photo": "round3.png"
   },
   {
@@ -40,11 +40,11 @@
     "date": "2024-05-16",
     "location": {
       "name": "The Woods",
-      "nrighborhood": "Williamsburg",
+      "neighborhood": "Williamsburg",
       "map": "https://maps.app.goo.gl/mGLUVuwwp88otpyB6"
     },
     "theme": "Into the Woods!",
-    "description": "Phil taught us not to fear Shadow Monsters with an updated version of his world-famous Moma installtion",
+    "description": "Phil taught us not to be afraid of monsters with an updated version of his \"Shadow Monsters\" installtion that's been on view at the Moma and other museums around the world",
     "photo": "round4.png"
   },
   {
