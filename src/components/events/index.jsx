@@ -3,7 +3,11 @@ import eventData from '../../assets/data/events.json';
 import './index.scss';
 
 export default function Events() {
-  const formatDate = (dateString) => new Date(`${dateString}T00:00:00Z`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const formatDate = (dateString) => {
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day + 1)); // Add 1 to correct for zero-index issue
+    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  };
 
   const sortedEvents = eventData.sort((a, b) => (a.date > b.date ? -1 : 1));
 
