@@ -1,88 +1,110 @@
-// TODO, create a color, ASCII art version of the header image, then react to pointer events by swapping portions of the image out with the ascii for that location, let the ascii art hang for a few seconds and fade back to the image so that the user can create trails of code by dragging that still resemble the image
-
 import React, { useState, useRef, useEffect } from 'react';
-import headerImg from '../../assets/images/header.png';
+import image1 from '../../assets/images/header1.png';
+import image2 from '../../assets/images/header2.png';
+import image3 from '../../assets/images/header3.png';
 import logo from '../../assets/images/logo.svg';
 
 import './index.scss';
 
 export default function Hero() {
-  const amount = 16;
-  const [size, setSize] = useState(100);
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
-  const [arrayLength, setArrayLength] = useState(0);
-  const [cells, setCells] = useState(new Array(100).fill({ active: false }));
+  const images = [image1, image2, image3];
+  const imagesRef = useRef();
+  const [width, setWidth] = useState(100);
+  const [height, setHeight] = useState(100);
 
-  const cellsRef = useRef();
+  const pointer = useRef({ down: false, x: 0.5, y: 0.5, vx: 0, vy: 0 });
+  const prevPointer = useRef({ x: 0.5, y: 0.5 });
+  const animationRef = useRef();
+  const canvasRef = useRef();
+  const contextRef = useRef();
+
+  const animate = () => {
+    if (contextRef.current) {
+      contextRef.current.clearRect(0, 0, width, height);
+      if (pointer.current.down) {
+        pointer.current.vx = prevPointer.current.x - pointer.current.x;
+        pointer.current.vy = prevPointer.current.y - pointer.current.y;
+      } else {
+        pointer.current.vx *= 0.95;
+        pointer.current.vy *= 0.95;
+        pointer.current.x -= pointer.current.vx;
+        pointer.current.y -= pointer.current.vy;
+      }
+      contextRef.current.beginPath();
+      contextRef.current.arc(pointer.current.x * width, pointer.current.y * height, 15, 0, Math.PI * 2);
+      contextRef.current.fillStyle = 'red';
+      contextRef.current.fill();
+    }
+
+    animationRef.current = requestAnimationFrame(animate);
+  };
+  const pointerDown = (e) => {
+    pointer.current.down = true;
+  };
+  const pointerUp = (e) => {
+    pointer.current.down = false;
+  };
+  const pointerMove = (e) => {
+    prevPointer.current = pointer.current;
+    pointer.current = {
+      x: e.clientX / width,
+      y: e.clientY / height,
+      down: pointer.current.down,
+      vx: pointer.current.vx,
+      vy: pointer.current.vy,
+    };
+  };
 
   useEffect(() => {
     const resize = () => {
-      setWidth(cellsRef.current.getBoundingClientRect().width);
-      setHeight(cellsRef.current.getBoundingClientRect().height);
+      // if (!imagesRef.current || !canvasRef.current) return;
+      const { width, height } = imagesRef?.current.getBoundingClientRect();
+      console.log({ width, height });
+      setWidth(width);
+      setHeight(height);
+
+      // TODO: set these as JSX params?
+      canvasRef.current.width = width;
+      canvasRef.current.height = height;
+      contextRef.current = canvasRef.current.getContext('2d');
     };
-    addEventListener('resize', resize);
 
+    window.addEventListener('resize', resize);
     resize();
-    return (() => {
-      removeEventListener('resize', resize);
-    });
-  }, []);
+
+    animationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      cancelAnimationFrame(animationRef.current);
+    };
+  }, [imagesRef, width, height]);
 
   useEffect(() => {
-    if (!height) return;
-    // console.log(width, height);
-    const nextSize = height / amount;
-    setSize(nextSize);
-    const cols = Math.ceil(width / nextSize);
-    const rows = Math.ceil(height / nextSize);
-    setArrayLength(cols * rows);
-  }, [width, height]);
-
-  useEffect(() => {
-    setCells(new Array(arrayLength || 1).fill(null).map((_, index) => ({
-      id: `cell-${index}`,
-      active: false,
-      top: height ? Math.floor(index / (Math.ceil(width / size))) * size : 0,
-      left: height ? (index % Math.ceil(width / size)) * size : 0,
-      char: Math.round(Math.random()),
-    })));
-  }, [arrayLength]);
+    if (canvasRef.current) contextRef.current = canvasRef.current.getContext('2d');
+  }, [canvasRef]);
 
   return (
-    <div className="hero">
-      <div className="hero-image">
-        <img src={headerImg} />
+    <div
+      className="hero"
+      onPointerMove={pointerMove}
+      onPointerDown={pointerDown}
+      onPointerUp={pointerUp}
+    >
+      <div className="hero-images" ref={imagesRef}>
+        {images.map((image, index) => (
+          <img key={index} className="hero-images-image" src={image} alt={`Background ${index}`} />
+        ))}
       </div>
-      <div
-        className="hero-cells"
-        ref={cellsRef}
-      >
-        {
-          cells.map((cell) => (
-            <span
-              key={cell.id}
-              className={`hero-cells-cell ${cell.active ? 'active' : ''}`}
-              style={{
-                top: cell.top,
-                left: cell.left,
-                width: size,
-                height: size,
-                fontSize: size,
-                lineHeight: `${size}px`,
-              }}
-              onPointerMove={(e) => {
-                e.target.classList.add('active');
-                setTimeout(() => { e.target.classList.remove('active'); }, 2000);
-              }}
-            >
-              {cell.char}
-            </span>
-          ))
-        }
-      </div>
+
+      <canvas
+        className="hero-canvas"
+        ref={canvasRef}
+
+      />
+
       <div className="hero-logo">
-        <img className="hero-logo-image" src={logo} />
+        <img className="hero-logo-image" src={logo} alt="Logo" />
       </div>
     </div>
   );
