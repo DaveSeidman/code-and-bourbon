@@ -6,6 +6,7 @@ import Events from './components/events';
 import Join from './components/join';
 import User from './components/user';
 import Footer from './components/footer';
+import SignUp from './pages/signup';
 import './index.scss';
 
 export default function App() {
@@ -16,9 +17,12 @@ export default function App() {
       <div className="app">
 
         <Routes>
-
           <Route
-            path="/:page?"
+            path="/signup"
+            element={<SignUp />}
+          />
+          <Route
+            path="/?"
             element={(
               <>
                 <Hero />
@@ -29,7 +33,6 @@ export default function App() {
                 </div>
                 <Footer />
                 <User />
-
               </>
             )}
           />

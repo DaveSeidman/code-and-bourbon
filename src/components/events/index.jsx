@@ -18,7 +18,6 @@ export default function Events() {
       : 'https://code-and-bourbon-back.onrender.com';
 
     const fetchedEvents = await fetch(`${BACKEND_URL}/api/events`).then((res) => res.json());
-    console.log(fetchedEvents);
     setEvents(fetchedEvents);
   };
   useEffect(() => {
@@ -30,7 +29,7 @@ export default function Events() {
       <h1>Events</h1>
       <div className="events">
         {events.map((data, index) => {
-          const prefix = `Round ${sortedEvents.length - index} 🥃 `;
+          const prefix = `🥃 Round ${sortedEvents.length - index}: `;
           const featured = new Date(data.date) > new Date();
           return (
             <div
