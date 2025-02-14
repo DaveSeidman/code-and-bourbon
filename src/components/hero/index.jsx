@@ -1,111 +1,125 @@
-import React, { useState, useRef, useEffect } from 'react';
-import image1 from '../../assets/images/header1.png';
-import image2 from '../../assets/images/header2.png';
-import image3 from '../../assets/images/header3.png';
-import logo from '../../assets/images/logo.svg';
-
+import React, { useRef, useEffect, useState } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import './index.scss';
+import { BoxGeometry, MeshNormalMaterial } from 'three';
 
-export default function Hero() {
-  const images = [image1, image2, image3];
-  const imagesRef = useRef();
-  const [width, setWidth] = useState(100);
-  const [height, setHeight] = useState(100);
+function Cubes() {
+  const [cubes, setCubes] = useState([]);
+  const pointer = useRef({ x: 0, y: 0, vx: 0, vy: 0 });
+  const prevPointer = useRef();
+  const TORQUE_SWITCH_THRESHOLD = 2;
 
-  const pointer = useRef({ down: false, x: 0.5, y: 0.5, vx: 0, vy: 0 });
-  const prevPointer = useRef({ x: 0.5, y: 0.5 });
-  const animationRef = useRef();
-  const canvasRef = useRef();
-  const contextRef = useRef();
+  const mouseMove = (e) => {
+    const x = (e.clientX / window.innerWidth) * 2 - 1; // Normalize to range -1 to 1
+    const y = (1 - e.clientY / window.innerHeight) * 2 - 1; // Normalize to range -1 to 1
+    if (!prevPointer.current) prevPointer.current = { x, y };
+    pointer.current = { x, y, vx: x - prevPointer.current.x, vy: y - prevPointer.current.y };
 
-  const animate = () => {
-    if (contextRef.current) {
-      contextRef.current.clearRect(0, 0, width, height);
-      if (pointer.current.down) {
-        pointer.current.vx = prevPointer.current.x - pointer.current.x;
-        pointer.current.vy = prevPointer.current.y - pointer.current.y;
-      } else {
-        pointer.current.vx *= 0.95;
-        pointer.current.vy *= 0.95;
-        pointer.current.x -= pointer.current.vx;
-        pointer.current.y -= pointer.current.vy;
+    setCubes((prevCubes) => prevCubes.map((cube) => {
+      const dx = cube.position[0] - x;
+      const dy = cube.position[1] - y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const influence = Math.max(0, 1 - distance);
+
+      const newTorque = { ...cube.torque };
+      const newRotation = [...cube.rotation];
+      let newDirection = cube.direction;
+
+      if (!cube.direction) {
+        newDirection = Math.abs(pointer.current.vx) > Math.abs(pointer.current.vy) ? 'y' : 'x';
+      } else if (cube.direction === 'x' && Math.abs(pointer.current.vy) > Math.abs(cube.torque.x) * TORQUE_SWITCH_THRESHOLD) {
+        newDirection = 'y';
+        newTorque.x = 0;
+        newRotation[0] = 0;
+      } else if (cube.direction === 'y' && Math.abs(pointer.current.vx) > Math.abs(cube.torque.y) * TORQUE_SWITCH_THRESHOLD) {
+        newDirection = 'x';
+        newTorque.y = 0;
+        newRotation[1] = 0;
       }
-      contextRef.current.beginPath();
-      contextRef.current.arc(pointer.current.x * width, pointer.current.y * height, 15, 0, Math.PI * 2);
-      contextRef.current.fillStyle = 'red';
-      contextRef.current.fill();
+
+      if (newDirection === 'x') {
+        newTorque.x += pointer.current.vy * influence * -1;
+      } else {
+        newTorque.y += pointer.current.vx * influence * 1;
+      }
+
+      return {
+        ...cube,
+        torque: newTorque,
+        rotation: newRotation,
+        direction: newDirection,
+      };
+    }));
+
+    prevPointer.current = { ...pointer.current };
+  };
+
+  useFrame(() => {
+    setCubes((prevCubes) => prevCubes.map((cube) => {
+      const newRotation = [
+        cube.rotation[0] + cube.torque.x,
+        cube.rotation[1] + cube.torque.y,
+        cube.rotation[2],
+      ];
+      return {
+        ...cube,
+        rotation: newRotation,
+        torque: {
+          x: cube.torque.x * 0.975,
+          y: cube.torque.y * 0.975,
+        },
+      };
+    }));
+  });
+
+  useEffect(() => {
+    const size = 50;
+    const maxDim = Math.max(window.innerWidth, window.innerHeight);
+    const cols = Math.ceil(maxDim / size);
+    const rows = Math.ceil(maxDim / size);
+    const nextCubes = [];
+    for (let col = 0; col < cols; col += 1) {
+      for (let row = 0; row < rows; row += 1) {
+        nextCubes.push({
+          position: [((col / cols) - 0.5) * 4, ((row / rows) - 0.5) * 4, 0],
+          rotation: [0, 0, 0],
+          torque: { x: 0, y: 0 },
+          direction: null,
+        });
+      }
     }
+    setCubes(nextCubes);
 
-    animationRef.current = requestAnimationFrame(animate);
-  };
-  const pointerDown = (e) => {
-    pointer.current.down = true;
-  };
-  const pointerUp = (e) => {
-    pointer.current.down = false;
-  };
-  const pointerMove = (e) => {
-    prevPointer.current = pointer.current;
-    pointer.current = {
-      x: e.clientX / width,
-      y: e.clientY / height,
-      down: pointer.current.down,
-      vx: pointer.current.vx,
-      vy: pointer.current.vy,
-    };
-  };
-
-  useEffect(() => {
-    const resize = () => {
-      // if (!imagesRef.current || !canvasRef.current) return;
-      const { width, height } = imagesRef?.current.getBoundingClientRect();
-      console.log({ width, height });
-      setWidth(width);
-      setHeight(height);
-
-      // TODO: set these as JSX params?
-      canvasRef.current.width = width;
-      canvasRef.current.height = height;
-      contextRef.current = canvasRef.current.getContext('2d');
-    };
-
-    window.addEventListener('resize', resize);
-    resize();
-
-    animationRef.current = requestAnimationFrame(animate);
-
+    window.addEventListener('mousemove', mouseMove);
     return () => {
-      window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animationRef.current);
+      window.removeEventListener('mousemove', mouseMove);
     };
-  }, [imagesRef, width, height]);
-
-  useEffect(() => {
-    if (canvasRef.current) contextRef.current = canvasRef.current.getContext('2d');
-  }, [canvasRef]);
+  }, []);
 
   return (
-    <div
-      className="hero"
-      onPointerMove={pointerMove}
-      onPointerDown={pointerDown}
-      onPointerUp={pointerUp}
-    >
-      <div className="hero-images" ref={imagesRef}>
-        {images.map((image, index) => (
-          <img key={index} className="hero-images-image" src={image} alt={`Background ${index}`} />
-        ))}
-      </div>
+    <group>
+      {cubes.map((cube, index) => (
+        <mesh
+          key={index}
+          rotation={cube.rotation}
+          position={cube.position}
+        >
+          <boxGeometry args={[0.15, 0.15, 0.15]} />
+          <meshNormalMaterial />
+        </mesh>
+      ))}
+    </group>
+  );
+}
 
-      <canvas
-        className="hero-canvas"
-        ref={canvasRef}
-
-      />
-
-      <div className="hero-logo">
-        <img className="hero-logo-image" src={logo} alt="Logo" />
-      </div>
+export default function Hero() {
+  return (
+    <div className="hero">
+      <Canvas camera={{ position: [0, 0, 10], fov: 15 }}>
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} />
+        <Cubes />
+      </Canvas>
     </div>
   );
 }
