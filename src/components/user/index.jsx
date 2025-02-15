@@ -4,8 +4,6 @@ import './index.scss';
 
 export default function User() {
   const [user, setUser] = useState(null);
-
-  console.log(user);
   // Determine backend URL based on environment
   const BACKEND_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
@@ -20,12 +18,12 @@ export default function User() {
       });
 
     // Listen for login event from popup
-    window.addEventListener('message', (event) => {
-      if (event.origin !== BACKEND_URL) return;
-      if (event.data?.type === 'oauth-success') {
-        setUser(event.data.user);
-      }
-    });
+    // window.addEventListener('message', (event) => {
+    //   if (event.origin !== BACKEND_URL) return;
+    //   if (event.data?.type === 'oauth-success') {
+    //     setUser(event.data.user);
+    //   }
+    // });
   }, []);
 
   const login = () => {

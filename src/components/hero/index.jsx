@@ -1,88 +1,183 @@
-// TODO, create a color, ASCII art version of the header image, then react to pointer events by swapping portions of the image out with the ascii for that location, let the ascii art hang for a few seconds and fade back to the image so that the user can create trails of code by dragging that still resemble the image
+import React, { useRef, useEffect, useState } from 'react';
+import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import { Environment, RoundedBox } from '@react-three/drei';
+import { TextureLoader, BoxGeometry, Vector2, MeshStandardMaterial } from 'three';
 
-import React, { useState, useRef, useEffect } from 'react';
-import headerImg from '../../assets/images/header.png';
+import header1Img from '../../assets/images/header1.png';
 import logo from '../../assets/images/logo.svg';
-
 import './index.scss';
 
-export default function Hero() {
-  const amount = 16;
-  const [size, setSize] = useState(100);
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
-  const [arrayLength, setArrayLength] = useState(0);
-  const [cells, setCells] = useState(new Array(100).fill({ active: false }));
+const edgeLength = 0.18;
+const gap = 0.02;
+// Shared base geometry
+const sharedGeometry = new BoxGeometry(edgeLength, edgeLength, edgeLength);
 
-  const cellsRef = useRef();
+function Cubes({ pointer }) {
+  // const roundedBoxRef = useRef();
+  const texture = useLoader(TextureLoader, header1Img);
+  const [cubes, setCubes] = useState([]);
+  const TORQUE_SWITCH_THRESHOLD = 2;
+  const RESET_TWEEN_SPEED = 10;
 
   useEffect(() => {
-    const resize = () => {
-      setWidth(cellsRef.current.getBoundingClientRect().width);
-      setHeight(cellsRef.current.getBoundingClientRect().height);
-    };
-    addEventListener('resize', resize);
+    setCubes((prevCubes) => prevCubes.map((cube) => {
+      // const dx = cube.position[0] - x;
+      // const dy = cube.position[1] - y;
+      const dx = cube.position[0] - pointer.x;
+      const dy = cube.position[1] - pointer.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const influence = Math.max(0, 1 - distance); // TODO: change one to set the radius of influence
 
-    resize();
-    return (() => {
-      removeEventListener('resize', resize);
-    });
+      const newTorque = { ...cube.torque };
+      let newDirection = cube.direction;
+
+      if (!cube.direction) {
+        newDirection = Math.abs(pointer.vx) > Math.abs(pointer.vy) ? 'y' : 'x';
+      } else if (cube.direction === 'x' && Math.abs(pointer.vy) > Math.abs(cube.torque.x) * TORQUE_SWITCH_THRESHOLD) {
+        newDirection = 'y';
+        newTorque.x = 0;
+      } else if (cube.direction === 'y' && Math.abs(pointer.vx) > Math.abs(cube.torque.y) * TORQUE_SWITCH_THRESHOLD) {
+        newDirection = 'x';
+        newTorque.y = 0;
+      }
+
+      if (newDirection === 'x') {
+        newTorque.x += pointer.vy * influence * -0.5;
+      } else {
+        newTorque.y += pointer.vx * influence * 0.5;
+      }
+
+      return {
+        ...cube,
+        torque: newTorque,
+        direction: newDirection,
+      };
+    }));
+
+    // prevPointer.current = { ...pointer.current };
+  }, [pointer]);
+
+  useFrame(() => {
+    setCubes((prevCubes) => prevCubes.map((cube) => {
+      const newRotation = [
+        cube.rotation[0] + cube.torque.x,
+        cube.rotation[1] + cube.torque.y,
+        cube.rotation[2],
+      ];
+
+      if (cube.direction === 'x') {
+        newRotation[1] += (0 - newRotation[1]) / RESET_TWEEN_SPEED;
+      } else {
+        newRotation[0] += (0 - newRotation[0]) / RESET_TWEEN_SPEED;
+      }
+
+      return {
+        ...cube,
+        rotation: newRotation,
+        torque: {
+          x: cube.torque.x * 0.975,
+          y: cube.torque.y * 0.975,
+        },
+      };
+    }));
+  });
+
+  useEffect(() => {
+    const size = 80;
+    const maxDim = Math.max(window.innerWidth, window.innerHeight);
+    const cols = Math.ceil(maxDim / size);
+    const rows = Math.ceil(maxDim / size);
+    const nextCubes = [];
+
+    for (let col = 0; col <= cols; col += 1) {
+      for (let row = 0; row <= rows; row += 1) {
+        // Clone the shared geometry and modify UVs once
+        // const geometry = roundedBoxRef.current.geometry.clone();
+        const geometry = sharedGeometry.clone();
+        const uv = geometry.attributes.uv.array;
+
+        for (let i = 0; i <= uv.length; i += 2) {
+          uv[i] = col / (cols + 1) + uv[i] * (1 / (cols + 1));
+          uv[i + 1] = row / (rows + 1) + uv[i + 1] * (1 / (rows + 1));
+        }
+        geometry.attributes.uv.needsUpdate = true;
+
+        nextCubes.push({
+          position: [((col - cols / 2) * (edgeLength + gap)), ((row - rows / 2) * (edgeLength + gap)), 0],
+          rotation: [0, 0, 0],
+          torque: { x: 0, y: 0 },
+          direction: null,
+          geometry, // Store precomputed geometry here
+        });
+      }
+    }
+
+    setCubes(nextCubes);
   }, []);
 
-  useEffect(() => {
-    if (!height) return;
-    // console.log(width, height);
-    const nextSize = height / amount;
-    setSize(nextSize);
-    const cols = Math.ceil(width / nextSize);
-    const rows = Math.ceil(height / nextSize);
-    setArrayLength(cols * rows);
-  }, [width, height]);
+  return (
+    <group>
+      {/* <RoundedBox ref={roundedBoxRef} args={[edgeLength, edgeLength, edgeLength]} radius={0.001}> </RoundedBox> */}
+      {cubes.map((cube, index) => (
+        <mesh
+          castShadow
+          receiveShadow
+          key={index}
+          rotation={cube.rotation}
+          position={cube.position}
+          geometry={cube.geometry}
+        >
+          <meshStandardMaterial
+            map={texture}
+            metalness={0.2}
+            roughness={0.8}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
 
-  useEffect(() => {
-    setCells(new Array(arrayLength || 1).fill(null).map((_, index) => ({
-      id: `cell-${index}`,
-      active: false,
-      top: height ? Math.floor(index / (Math.ceil(width / size))) * size : 0,
-      left: height ? (index % Math.ceil(width / size)) * size : 0,
-      char: Math.round(Math.random()),
-    })));
-  }, [arrayLength]);
+export default function Hero() {
+  const [pointer, setPointer] = useState({ x: 0, y: 0, vx: 0, vy: 0 });
+  const prevPointer = useRef({ x: 0, y: 0 });
+
+  const mouseMove = (e) => {
+    const { top, height, width } = e.target.getBoundingClientRect();
+    const x = (e.clientX / width) * 2 - 1;
+    const y = (1 - (e.clientY - top) / height) * 2 - 1;
+
+    setPointer(() => {
+      const newPointer = { x, y, vx: x - prevPointer.current.x, vy: y - prevPointer.current.y };
+
+      prevPointer.current = { x: newPointer.x, y: newPointer.y };
+      return newPointer;
+    });
+  };
 
   return (
-    <div className="hero">
-      <div className="hero-image">
-        <img src={headerImg} />
-      </div>
-      <div
-        className="hero-cells"
-        ref={cellsRef}
+    <div
+      className="hero"
+      onMouseMove={mouseMove}
+    >
+      <Canvas
+        shadows
+        shadowMap
+        camera={{
+          position: [0, 0, 10],
+          fov: 10,
+        }}
       >
-        {
-          cells.map((cell) => (
-            <span
-              key={cell.id}
-              className={`hero-cells-cell ${cell.active ? 'active' : ''}`}
-              style={{
-                top: cell.top,
-                left: cell.left,
-                width: size,
-                height: size,
-                fontSize: size,
-                lineHeight: `${size}px`,
-              }}
-              onPointerMove={(e) => {
-                e.target.classList.add('active');
-                setTimeout(() => { e.target.classList.remove('active'); }, 2000);
-              }}
-            >
-              {cell.char}
-            </span>
-          ))
-        }
-      </div>
+        <ambientLight intensity={1.5} />
+        <pointLight intensity={10} position={[0, 4, 0]} castShadow />
+        <Environment preset="city" />
+        <Cubes
+          pointer={pointer}
+          prevPointer={prevPointer.current}
+        />
+      </Canvas>
       <div className="hero-logo">
-        <img className="hero-logo-image" src={logo} />
+        <img src={logo} />
       </div>
     </div>
   );
