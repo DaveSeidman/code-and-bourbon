@@ -26,14 +26,11 @@
 
   &-logo {
     position: absolute;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     pointer-events: none;
-    &-image {
-      max-width: 50vw;
-      // pointer-events: none;
-    }
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 50vw;
   }
 }
