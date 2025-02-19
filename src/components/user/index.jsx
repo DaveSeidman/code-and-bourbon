@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './index.scss';
 
-export default function User() {
-  const [user, setUser] = useState(null);
-  // Determine backend URL based on environment
+export default function User({ user, setUser }) {
   const BACKEND_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:3000'
     : 'https://code-and-bourbon-back.onrender.com';
+
   useEffect(() => {
     axios.get(`${BACKEND_URL}/auth/user`, { withCredentials: true })
       .then((response) => {
@@ -16,14 +15,6 @@ export default function User() {
       .catch(() => {
         setUser(null);
       });
-
-    // Listen for login event from popup
-    // window.addEventListener('message', (event) => {
-    //   if (event.origin !== BACKEND_URL) return;
-    //   if (event.data?.type === 'oauth-success') {
-    //     setUser(event.data.user);
-    //   }
-    // });
   }, []);
 
   const login = () => {

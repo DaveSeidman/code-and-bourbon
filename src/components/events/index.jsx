@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './index.scss';
 
 export default function Events() {
   const [events, setEvents] = useState([]);
+  const navigate = useNavigate();
 
   const formatDate = (dateString) => {
     const [year, month, day] = dateString.split('-').map(Number);
@@ -33,20 +35,30 @@ export default function Events() {
           const featured = new Date(data.date) > new Date();
           return (
             <div
-              key={data.id}
-              className={`events-event ${featured ? 'featured' : ''}`}
+              key={data._id}
+              className={`events-event ${featured ? 'featured' : ''}`.trim()}
             >
               <div className="events-event-banner">
-                <img src={data.photo} alt={`Event ${data.theme}`} />
+                <img className="events-event-banner-image" src={data.photo} alt={`Event ${data.theme}`} />
                 <div className="events-event-banner-fade" />
-                <h3>
-                  <span className="bold">{prefix}</span>
-                  <span className="">{data.theme}</span>
+                <h3 className="events-event-banner-title">
+                  <span className="thin">{prefix}</span>
+                  <span>{data.theme}</span>
                 </h3>
-                {featured && <button type="button">Sign Up!</button>}
+                {featured && (
+                  <button
+                    className="events-event-banner-signup"
+                    type="button"
+                    onClick={() => {
+                      navigate(`signup/${data._id}`);
+                    }}
+                  >
+                    Sign Up!
+                  </button>
+                )}
               </div>
               <div className="events-event-content">
-                <h3 className="events-event-content-dateplace">
+                <h3 className="events-event-content-title">
                   {formatDate(data.date)} @ <a href={data.location.map} target="map">{data.location.name}</a>
                 </h3>
                 <p

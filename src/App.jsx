@@ -11,15 +11,33 @@ import './index.scss';
 
 export default function App() {
   const basePath = import.meta.env.BASE_URL || '/';
+  const [user, setUser] = useState(localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null);
+
+  useEffect(() => {
+    if (user) localStorage.setItem('user', JSON.stringify(user));
+    else { localStorage.removeItem('user'); }
+  }, [user]);
+
+  useEffect(() => {
+    const userFromStorage = localStorage.getItem('user');
+    console.log({ userFromStorage });
+    if (userFromStorage) {
+      console.log('found user in storage, set state');
+      setUser(JSON.parse(userFromStorage));
+    }
+  }, []);
 
   return (
     <Router basename={basePath}>
       <div className="app">
-
         <Routes>
           <Route
-            path="/signup"
-            element={<SignUp />}
+            path="/signup/:eventId?"
+            element={(
+              <SignUp
+                user={user}
+              />
+            )}
           />
           <Route
             path="/?"
@@ -32,7 +50,10 @@ export default function App() {
                   <Join />
                 </div>
                 <Footer />
-                <User />
+                <User
+                  user={user}
+                  setUser={setUser}
+                />
               </>
             )}
           />
