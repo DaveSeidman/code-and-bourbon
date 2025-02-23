@@ -1,14 +1,11 @@
 # Code & Bourbon
 
-Description
+The frontend website for codeandbourbon.com
 
-First meeting
+My hope is that I only start the site and then help out with updates, it should be owned by our community. I'm also hoping to run it completely free so it's currently hosted with Github Pages and the backend runs on Render.com and the database is inside a free MongoDB cluster.
 
-Follow-up survey (to be handed out at the end of first session, or via QR code)
-What would you like to get out of the next session?
+### Development
 
-- More talks
-- A chance to present
-- More mingling / networking
-- Food / Entertainment?
-- Other (please type in)
+The site is made in React and built with Vite. If you'd like to collaborate, please create a branch, push your changes, and open a merge request. 
+
+The backend repository lives here: https://github.com/daveseidman/code-and-bourbon-back
