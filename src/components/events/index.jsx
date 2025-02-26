@@ -50,7 +50,8 @@ export default function Events() {
                     className="events-event-banner-signup"
                     type="button"
                     onClick={() => {
-                      navigate(`signup/${data._id}`);
+                      // navigate(`signup/${data._id}`);
+                      window.open('https://www.meetup.com/codeandbourbon/events/306133387/');
                     }}
                   >
                     Sign Up!
