@@ -32,7 +32,13 @@ export default function Events() {
       <div className="events">
         {events.map((data, index) => {
           const prefix = `🥃 Round ${sortedEvents.length - index}: `;
-          const featured = new Date(data.date) > new Date();
+          const [year, month, day] = data.date.split('-').map(Number);
+          const eventDate = new Date(year, month - 1, day);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          const featured = eventDate >= today;
+          // const featured = new Date(data.date).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0);
           return (
             <div
               key={data._id}
