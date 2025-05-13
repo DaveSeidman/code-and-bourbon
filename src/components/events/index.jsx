@@ -57,7 +57,7 @@ export default function Events() {
                     type="button"
                     onClick={() => {
                       // navigate(`signup/${data._id}`);
-                      window.open('https://www.meetup.com/codeandbourbon/events/306133387/');
+                      window.open('https://www.meetup.com/codeandbourbon/events/307782125/');
                     }}
                   >
                     Sign Up!
