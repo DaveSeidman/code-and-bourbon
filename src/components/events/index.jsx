@@ -17,8 +17,14 @@ export default function Events() {
       ? 'http://localhost:3000'
       : 'https://code-and-bourbon-back.onrender.com';
 
-    const fetchedEvents = await fetch(`${BACKEND_URL}/api/events`).then((res) => res.json());
-    setEvents(fetchedEvents);
+    try {
+      const fetchedEvents = await fetch(`${BACKEND_URL}/api/events`).then((res) => res.json());
+      // console.log(fetchedEvents);
+      setEvents(fetchedEvents);
+    } catch (err) {
+      console.log('cms unreachable');
+      // setEvents([]);
+    }
   };
 
   useEffect(() => {
