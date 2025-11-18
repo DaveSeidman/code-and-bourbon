@@ -1,0 +1,16 @@
+.signup {
+  .event {
+    &-rsvp {
+      display: flex;
+      gap: 1rem;
+
+      button {
+        transition: background .5s;
+        &.active {
+          background: green;
+        }
+      }
+
+    }
+  }
+}

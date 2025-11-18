@@ -34,9 +34,15 @@ export default function App() {
           <Route
             path="/signup/:eventId?"
             element={(
-              <SignUp
-                user={user}
-              />
+              <>
+                <SignUp
+                  user={user}
+                />
+                <User
+                  user={user}
+                  setUser={setUser}
+                />
+              </>
             )}
           />
           <Route

@@ -62,15 +62,16 @@ export default function Events() {
                     <span>{data.theme}</span>
                   </h3>
                   {featured && (
-                    <button
+                    <a
                       className="events-event-banner-signup"
                       type="button"
-                      onClick={() => {
-                        window.open('https://www.meetup.com/codeandbourbon/events/307782125/');
-                      }}
+                      href={`/signup/${data._id}`}
+                    // onClick={() => {
+                    //   window.open('https://www.meetup.com/codeandbourbon/events/307782125/');
+                    // }}
                     >
                       Sign Up!
-                    </button>
+                    </a>
                   )}
                 </div>
                 <div className="events-event-content">
