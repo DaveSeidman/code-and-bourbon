@@ -18,7 +18,7 @@ export default function User({ user, setUser }) {
   }, []);
 
   const login = () => {
-    window.location.href = `${BACKEND_URL}/auth/google`;
+    window.location.href = `${BACKEND_URL}/auth/google?redirect=${encodeURIComponent(window.location.href)}`;
   };
 
   const logout = () => {
