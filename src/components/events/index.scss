@@ -17,42 +17,9 @@
       flex-direction: row-reverse;
     }
 
-    &-banner, &-content {
+    &-banner,
+    &-content {
       width: calc(50% - 1rem);
-    }
-
-    &-banner {
-      position: relative;
-      height: 300px;
-
-      &-image, &-fade, &-title {
-        position: absolute;
-      }
-
-      &-image {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-      }
-
-      &-fade {
-        width: 100%;
-        height: 3.5rem;
-        background: rgba(0, 0, 0, .5);
-      }
-
-      &-title {
-        color: white;
-        margin: 1rem;
-        white-space: nowrap;
-      }
-
-      &-signup {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-      }
     }
 
     &-content {
@@ -68,7 +35,7 @@
       &-description {
         line-height: 1.75rem;
       }
-    }  
+    }
   }
 }
 
@@ -76,7 +43,9 @@
   .events {
     &-event {
       flex-wrap: wrap;
-      &-content, &-banner {
+
+      &-content,
+      &-banner {
         width: 100%;
       }
     }

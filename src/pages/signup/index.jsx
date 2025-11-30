@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import { formatDate } from '../../utils';
 import './index.scss';
 
 export default function SignUp({ user }) {
@@ -11,6 +12,7 @@ export default function SignUp({ user }) {
     ? 'http://localhost:3000'
     : 'https://code-and-bourbon-back.onrender.com';
 
+  const eventHasPassed = useRef(true);
 
   // Load event + signup
   const fetchData = async () => {
@@ -24,6 +26,11 @@ export default function SignUp({ user }) {
       ).then(res => res.json());
 
       setEvent(fetchedEvent);
+
+      const eventDate = new Date(fetchedEvent.date)
+      const today = new Date();
+      console.log(eventDate, today, eventDate >= today)
+      eventHasPassed.current = eventDate < today;
 
       // If user logged in, fetch their signup
       if (user?._id) {
@@ -79,10 +86,6 @@ export default function SignUp({ user }) {
   }, [eventId]);
 
 
-  ////////////////////////////////////////////////////////
-  // Render
-  ////////////////////////////////////////////////////////
-
   return (
     <div className="signup">
       <h1>Sign Up</h1>
@@ -92,14 +95,16 @@ export default function SignUp({ user }) {
       {event && (
         <div className="event">
           <h2 className="event-title">{event.theme}</h2>
-          <p>{event.date}</p>
-          <p>{event.location?.name}</p>
+          <img className="event-photo" src={`../${event.photo}`} />
+          <h3 className="events-event-content-title">
+            {formatDate(event.date)} @ <a href={event.location.map} target="map">{event.location.name}</a>
+          </h3>
 
           {user ? (
             <>
               <p>You are currently:</p>
 
-              <div className="event-rsvp">
+              <div className={`event-rsvp ${eventHasPassed.current ? 'past' : ''}`}>
                 <button onClick={rsvp} data-id="no" className={userResponse === -1 ? 'active' : ''} >Not Coming 🥲</button>
                 <button onClick={rsvp} data-id="maybe" className={userResponse === 0 ? 'active' : ''}>  Not Sure 🤔</button>
                 <button onClick={rsvp} data-id="yes" className={userResponse === 1 ? 'active' : ''}>  Planning to Come 🥳</button>

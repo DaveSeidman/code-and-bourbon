@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { formatDate } from '../../utils';
+import EventCard from '../EventCard';
 import './index.scss';
 
 export default function Events() {
   const [events, setEvents] = useState([]);
-  const navigate = useNavigate();
-
-  const formatDate = (dateString) => {
-    const [year, month, day] = dateString.split('-').map(Number);
-    const date = new Date(Date.UTC(year, month - 1, day + 1)); // Add 1 to correct for zero-index issue
-    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-  };
+  // const navigate = useNavigate();
 
   const fetchData = async () => {
     const BACKEND_URL = window.location.hostname === 'localhost'
@@ -19,7 +15,7 @@ export default function Events() {
 
     try {
       const fetchedEvents = await fetch(`${BACKEND_URL}/api/events`).then((res) => res.json());
-      // console.log(fetchedEvents);
+      console.log(fetchedEvents);
       setEvents(fetchedEvents);
     } catch (err) {
       console.log('cms unreachable');
@@ -41,7 +37,7 @@ export default function Events() {
           <div className="events-loading">Loading events...</div>
         ) : (
           sortedEvents.map((data, index) => {
-            const prefix = `🥃 Round ${sortedEvents.length - index}: `;
+            // const prefix = `🥃 Round ${sortedEvents.length - index}: `;
             const [year, month, day] = data.date.split('-').map(Number);
             const eventDate = new Date(year, month - 1, day);
             const today = new Date();
@@ -54,26 +50,7 @@ export default function Events() {
                 key={data._id}
                 className={`events-event ${featured ? 'featured' : ''}`}
               >
-                <div className="events-event-banner">
-                  <img className="events-event-banner-image" src={data.photo} alt={`Event ${data.theme}`} />
-                  <div className="events-event-banner-fade" />
-                  <h3 className="events-event-banner-title">
-                    <span className="thin">{prefix}</span>
-                    <span>{data.theme}</span>
-                  </h3>
-                  {featured && (
-                    <a
-                      className="events-event-banner-signup"
-                      type="button"
-                      href={`/signup/${data._id}`}
-                    // onClick={() => {
-                    //   window.open('https://www.meetup.com/codeandbourbon/events/307782125/');
-                    // }}
-                    >
-                      Sign Up!
-                    </a>
-                  )}
-                </div>
+                <EventCard data={data} featured={featured}></EventCard>
                 <div className="events-event-content">
                   <h3 className="events-event-content-title">
                     {formatDate(data.date)} @ <a href={data.location.map} target="map">{data.location.name}</a>

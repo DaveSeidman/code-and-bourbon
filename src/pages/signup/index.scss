@@ -1,11 +1,28 @@
 .signup {
+  margin: 4rem;
+
+  h1 {
+    margin: 0 !important;
+  }
+
   .event {
+
+    &-photo {
+      width: 300px;
+    }
+
     &-rsvp {
       display: flex;
       gap: 1rem;
 
+      &.past {
+        pointer-events: none;
+        opacity: .5;
+      }
+
       button {
         transition: background .5s;
+
         &.active {
           background: green;
         }
