@@ -11,7 +11,7 @@ export default function Events() {
   const fetchData = async () => {
     const BACKEND_URL = window.location.hostname === 'localhost'
       ? 'http://localhost:8000'
-      : 'https://code-and-bourbon-back.onrender.com';
+      : 'https://api.codeandbourbon.com';
 
     try {
       const fetchedEvents = await fetch(`${BACKEND_URL}/api/events`).then((res) => res.json());

@@ -5,7 +5,7 @@ import './index.scss';
 export default function User({ user, setUser }) {
   const BACKEND_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:8000'
-    : 'https://code-and-bourbon-back.onrender.com';
+    : 'https://api.codeandbourbon.com';
 
   useEffect(() => {
     axios.get(`${BACKEND_URL}/auth/user`, { withCredentials: true })

@@ -8,9 +8,10 @@ export default function SignUp({ user }) {
   const [event, setEvent] = useState(null);
   const [userResponse, setUserResponse] = useState(null); // -1, 0, 1, or null
 
+  // TODO: DRY
   const BACKEND_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:8000'
-    : 'https://code-and-bourbon-back.onrender.com';
+    : 'https://api.codeandbourbon.com';
 
   const eventHasPassed = useRef(true);
 
