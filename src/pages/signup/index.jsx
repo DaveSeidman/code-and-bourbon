@@ -9,7 +9,7 @@ export default function SignUp({ user }) {
   const [userResponse, setUserResponse] = useState(null); // -1, 0, 1, or null
 
   const BACKEND_URL = window.location.hostname === 'localhost'
-    ? 'http://localhost:3000'
+    ? 'http://localhost:8000'
     : 'https://code-and-bourbon-back.onrender.com';
 
   const eventHasPassed = useRef(true);
@@ -100,10 +100,10 @@ export default function SignUp({ user }) {
             {formatDate(event.date)} @ <a href={event.location.map} target="map">{event.location.name}</a>
           </h3>
 
+
           {user ? (
             <>
               <p>You are currently:</p>
-
               <div className={`event-rsvp ${eventHasPassed.current ? 'past' : ''}`}>
                 <button onClick={rsvp} data-id="no" className={userResponse === -1 ? 'active' : ''} >Not Coming 🥲</button>
                 <button onClick={rsvp} data-id="maybe" className={userResponse === 0 ? 'active' : ''}>  Not Sure 🤔</button>

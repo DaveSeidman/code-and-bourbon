@@ -10,7 +10,7 @@ export default function Events() {
 
   const fetchData = async () => {
     const BACKEND_URL = window.location.hostname === 'localhost'
-      ? 'http://localhost:3000'
+      ? 'http://localhost:8000'
       : 'https://code-and-bourbon-back.onrender.com';
 
     try {
