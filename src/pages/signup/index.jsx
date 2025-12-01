@@ -83,7 +83,7 @@ export default function SignUp({ user }) {
 
   useEffect(() => {
     fetchData();
-  }, [eventId]);
+  }, [eventId, user]);
 
 
   return (
