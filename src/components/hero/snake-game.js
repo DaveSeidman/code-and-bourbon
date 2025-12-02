@@ -47,7 +47,7 @@ export default function SnakeGame(canvas) {
   };
 
   document.addEventListener('keydown', (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     if (e.key === 'ArrowUp' && dir.y === 0) dir = { x: 0, y: 1 };
     if (e.key === 'ArrowDown' && dir.y === 0) dir = { x: 0, y: -1 };
     if (e.key === 'ArrowLeft' && dir.x === 0) dir = { x: -1, y: 0 };

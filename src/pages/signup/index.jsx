@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { formatDate } from '../../utils';
+import { ToastContainer, toast } from 'react-toastify'
 import './index.scss';
 
 export default function SignUp({ user }) {
@@ -30,7 +31,7 @@ export default function SignUp({ user }) {
 
       const eventDate = new Date(fetchedEvent.date)
       const today = new Date();
-      console.log(eventDate, today, eventDate >= today)
+      // console.log(eventDate, today, eventDate >= today)
       eventHasPassed.current = eventDate < today;
 
       // If user logged in, fetch their signup
@@ -75,9 +76,11 @@ export default function SignUp({ user }) {
 
       if (updated && typeof updated.status === 'number') {
         setUserResponse(updated.status);
+        toast('Thanks for Responding!')
       }
     } catch (err) {
       console.error("Error saving RSVP:", err);
+      toast('There was an issue saving your response')
     }
   };
 
@@ -116,6 +119,7 @@ export default function SignUp({ user }) {
           )}
         </div>
       )}
+      <ToastContainer></ToastContainer>
     </div>
   );
 }
