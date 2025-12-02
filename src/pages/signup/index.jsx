@@ -89,9 +89,11 @@ export default function SignUp({ user }) {
     fetchData();
   }, [eventId, user]);
 
+  console.log(event)
 
   return (
     <div className="signup">
+      <a className="home" href="/">🥃 &nbsp; Back Home</a>
       <h1>Sign Up</h1>
 
       {!event && <p>Select an event from the main page</p>}
@@ -99,7 +101,10 @@ export default function SignUp({ user }) {
       {event && (
         <div className="event">
           <h2 className="event-title">{event.theme}</h2>
-          <img className="event-photo" src={`../${event.photo}`} />
+          <div className="event-body">
+            <img className="event-body-photo" src={`../${event.photo}`} />
+            <p className='event-body-description'>{event.description}</p>
+          </div>
           <h3 className="events-event-content-title">
             {formatDate(event.date)} @ <a href={event.location.map} target="map">{event.location.name}</a>
           </h3>

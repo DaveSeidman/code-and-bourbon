@@ -1,14 +1,36 @@
 .signup {
-  margin: 4rem;
+  margin: 4rem auto;
+  max-width: 1000px;
+
+  .home {
+    font-size: 24px;
+    text-decoration: none;
+    position: absolute;
+    top: 0;
+    padding: 1rem 1rem 1rem 0;
+  }
 
   h1 {
     margin: 0 !important;
   }
 
   .event {
+    width: calc(100% - 4rem);
 
-    &-photo {
-      width: 300px;
+    &-body {
+      display: flex;
+      gap: 2rem;
+      width: 100%;
+
+      &-photo {
+        width: 400px;
+        height: 250px;
+        object-fit: cover;
+      }
+
+      &-description {
+        line-height: 26px;
+      }
     }
 
     &-rsvp {
