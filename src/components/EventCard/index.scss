@@ -39,3 +39,10 @@
     backdrop-filter: blur(3px);
   }
 }
+
+
+@media (max-width: 680px) {
+  .event-card {
+    width: 100%;
+  }
+}
