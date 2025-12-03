@@ -1,6 +1,7 @@
 .signup {
   margin: 4rem auto;
   max-width: 1000px;
+  width: calc(100% - 8rem);
 
   .home {
     font-size: 24px;
@@ -19,7 +20,7 @@
 
     &-body {
       display: flex;
-      flex-wrap: wrap;
+      // flex-wrap: wrap;
       gap: 2rem;
       width: 100%;
 
@@ -54,13 +55,19 @@
   }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 800px) {
 
   .signup {
     margin: 2rem;
 
     .home {
       top: 2rem;
+    }
+
+    .event {
+      &-body {
+        flex-wrap: wrap;
+      }
     }
 
     h1 {
