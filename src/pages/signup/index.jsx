@@ -106,7 +106,7 @@ export default function SignUp({ user }) {
             <p className='event-body-description'>{event.description}</p>
           </div>
           <h3 className="events-event-content-title">
-            {formatDate(event.date)} @ <a href={event.location.map} target="map">{event.location.name}</a>
+            {formatDate(event.date)} @ <a href={event.location.map} target="map">{event.location.name}</a> 7pm-10pm
           </h3>
 
 
