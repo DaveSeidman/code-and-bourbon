@@ -6,6 +6,6 @@ My hope is that I only start the site and then help out with updates, it should 
 
 ### Development
 
-The site is made in React and built with Vite. If you'd like to collaborate, please create a branch, push your changes, and open a merge request. 
+The site is made in React and built with Vite. If you'd like to collaborate, please create a branch, push your changes, and open a merge request.
 
 The backend repository lives here: https://github.com/daveseidman/code-and-bourbon-back

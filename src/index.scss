@@ -8,28 +8,30 @@
   src: url('assets/fonts/atkinson.ttf');
 }
 
-html, body {
+html,
+body {
   margin: 0;
   overflow-x: hidden;
 }
 
 .app {
-
   font-family: 'Outfit';
   font-size: 16px;
-  
-  h1, h2, h3 {
+
+  h1,
+  h2,
+  h3 {
     // margin: 1rem;
     // text-align: center;
   }
 
   button {
-    padding: .5rem 1rem;
+    padding: 0.5rem 1rem;
     border: 2px solid white;
     text-transform: uppercase;
-    background: rgba(0, 0, 0, .5);
+    background: rgba(0, 0, 0, 0.5);
     color: white;
-    letter-spacing: .1rem;
+    letter-spacing: 0.1rem;
     cursor: pointer;
   }
 
@@ -48,11 +50,17 @@ html, body {
     max-width: 1000px;
     margin: 2rem auto;
 
-    &:before { content: '<'}
-    &:after { content: '/>'}
+    &:before {
+      content: '<';
+    }
+    &:after {
+      content: '/>';
+    }
   }
 
-  a { color: black; }
+  a {
+    color: black;
+  }
 
   .header {
     width: 100%;
@@ -68,7 +76,7 @@ html, body {
       content: '';
       position: absolute;
       inset: 0;
-      background: rgba(0, 0, 0, .5);
+      background: rgba(0, 0, 0, 0.5);
     }
 
     &-image {
@@ -94,7 +102,8 @@ html, body {
     margin: 0 auto;
     &-page {
       margin-bottom: 3rem;
-      p, ul {
+      p,
+      ul {
         font-family: 'Outfit';
         margin: 2rem auto;
         line-height: 1.75rem;

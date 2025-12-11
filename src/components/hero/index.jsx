@@ -1,7 +1,8 @@
-import React, { useRef, useEffect } from 'react';
-import SnakeGame from './snake-game';
+import React, { useEffect, useRef } from 'react';
+
 import logoImg from '../../assets/images/logo.svg';
 import './index.scss';
+import SnakeGame from './snake-game';
 
 export default function Hero() {
   const canvasRef = useRef(null);
@@ -29,10 +30,14 @@ export default function Hero() {
   const handleDirection = (x, y) => {
     const event = new KeyboardEvent('keydown', {
       key:
-        y === -1 ? 'ArrowUp'
-          : y === 1 ? 'ArrowDown'
-            : x === -1 ? 'ArrowLeft'
-              : x === 1 ? 'ArrowRight'
+        y === -1
+          ? 'ArrowUp'
+          : y === 1
+            ? 'ArrowDown'
+            : x === -1
+              ? 'ArrowLeft'
+              : x === 1
+                ? 'ArrowRight'
                 : '',
     });
     document.dispatchEvent(event);

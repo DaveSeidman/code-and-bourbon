@@ -41,11 +41,11 @@
 
       &.past {
         pointer-events: none;
-        opacity: .5;
+        opacity: 0.5;
       }
 
       button {
-        transition: background .5s;
+        transition: background 0.5s;
 
         &.active {
           background: green;
@@ -56,7 +56,6 @@
 }
 
 @media (max-width: 800px) {
-
   .signup {
     margin: 2rem;
 
@@ -74,5 +73,4 @@
       margin-top: 6rem !important;
     }
   }
-
 }

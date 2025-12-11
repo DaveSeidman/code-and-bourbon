@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+
 import './index.scss';
 
 export default function User({ user, setUser }) {
-  const BACKEND_URL = window.location.hostname === 'localhost'
-    ? 'http://localhost:8000'
-    : 'https://api.codeandbourbon.com';
+  const BACKEND_URL =
+    window.location.hostname === 'localhost'
+      ? 'http://localhost:8000'
+      : 'https://api.codeandbourbon.com';
 
   useEffect(() => {
-    axios.get(`${BACKEND_URL}/auth/user`, { withCredentials: true })
+    axios
+      .get(`${BACKEND_URL}/auth/user`, { withCredentials: true })
       .then((response) => {
         setUser(response.data);
       })
@@ -22,7 +25,8 @@ export default function User({ user, setUser }) {
   };
 
   const logout = () => {
-    axios.get(`${BACKEND_URL}/auth/logout`, { withCredentials: true })
+    axios
+      .get(`${BACKEND_URL}/auth/logout`, { withCredentials: true })
       .then(() => {
         setUser(null);
       })
@@ -40,10 +44,15 @@ export default function User({ user, setUser }) {
             {user?.displayName}
           </p>
           <img src={user?.profilePicture} alt="Profile" width="50" />
-          <button type="button" onClick={logout}>Logout</button>
+          <button type="button" onClick={logout}>
+            Logout
+          </button>
         </div>
       ) : (
-        <button type="button" onClick={login}>Login</button>)}
+        <button type="button" onClick={login}>
+          Login
+        </button>
+      )}
     </div>
   );
 }

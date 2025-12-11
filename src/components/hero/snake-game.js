@@ -55,18 +55,24 @@ export default function SnakeGame(canvas) {
   });
 
   function renderSquare(x, y, color) {
-    const sx = (x * boxSize) / canvas.width * 2 - 1;
-    const sy = (y * boxSize) / canvas.height * 2 - 1;
-    const sX = boxSize / canvas.width * 2;
-    const sY = boxSize / canvas.height * 2;
+    const sx = ((x * boxSize) / canvas.width) * 2 - 1;
+    const sy = ((y * boxSize) / canvas.height) * 2 - 1;
+    const sX = (boxSize / canvas.width) * 2;
+    const sY = (boxSize / canvas.height) * 2;
 
     const vertices = new Float32Array([
-      sx, sy,
-      sx + sX, sy,
-      sx + sX, sy + sY,
-      sx, sy,
-      sx + sX, sy + sY,
-      sx, sy + sY,
+      sx,
+      sy,
+      sx + sX,
+      sy,
+      sx + sX,
+      sy + sY,
+      sx,
+      sy,
+      sx + sX,
+      sy + sY,
+      sx,
+      sy + sY,
     ]);
 
     const buffer = gl.createBuffer();
@@ -78,7 +84,10 @@ export default function SnakeGame(canvas) {
     gl.compileShader(vs);
 
     const fs = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fs, `precision mediump float; void main() { gl_FragColor = vec4(${color}, 1); }`);
+    gl.shaderSource(
+      fs,
+      `precision mediump float; void main() { gl_FragColor = vec4(${color}, 1); }`,
+    );
     gl.compileShader(fs);
 
     const prog = gl.createProgram();
@@ -97,18 +106,36 @@ export default function SnakeGame(canvas) {
   function renderImage(x, y) {
     if (!texture) return;
 
-    const sx = (x * boxSize) / canvas.width * 2 - 1;
-    const sy = (y * boxSize) / canvas.height * 2 - 1;
-    const sX = boxSize / canvas.width * 2;
-    const sY = boxSize / canvas.height * 2;
+    const sx = ((x * boxSize) / canvas.width) * 2 - 1;
+    const sy = ((y * boxSize) / canvas.height) * 2 - 1;
+    const sX = (boxSize / canvas.width) * 2;
+    const sY = (boxSize / canvas.height) * 2;
 
     const vertices = new Float32Array([
-      sx, sy, 0, 0,
-      sx + sX, sy, 1, 0,
-      sx + sX, sy + sY, 1, 1,
-      sx, sy, 0, 0,
-      sx + sX, sy + sY, 1, 1,
-      sx, sy + sY, 0, 1,
+      sx,
+      sy,
+      0,
+      0,
+      sx + sX,
+      sy,
+      1,
+      0,
+      sx + sX,
+      sy + sY,
+      1,
+      1,
+      sx,
+      sy,
+      0,
+      0,
+      sx + sX,
+      sy + sY,
+      1,
+      1,
+      sx,
+      sy + sY,
+      0,
+      1,
     ]);
 
     const buffer = gl.createBuffer();
@@ -116,11 +143,17 @@ export default function SnakeGame(canvas) {
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
     const vs = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vs, 'attribute vec2 a; attribute vec2 uv; varying vec2 v; void main() { gl_Position = vec4(a, 0, 1); v = uv; }');
+    gl.shaderSource(
+      vs,
+      'attribute vec2 a; attribute vec2 uv; varying vec2 v; void main() { gl_Position = vec4(a, 0, 1); v = uv; }',
+    );
     gl.compileShader(vs);
 
     const fs = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fs, 'precision mediump float; varying vec2 v; uniform sampler2D t; void main() { gl_FragColor = texture2D(t, v); }');
+    gl.shaderSource(
+      fs,
+      'precision mediump float; varying vec2 v; uniform sampler2D t; void main() { gl_FragColor = texture2D(t, v); }',
+    );
     gl.compileShader(fs);
 
     const prog = gl.createProgram();
@@ -152,20 +185,26 @@ export default function SnakeGame(canvas) {
     const vs = gl.createShader(gl.VERTEX_SHADER);
     const fs = gl.createShader(gl.FRAGMENT_SHADER);
 
-    gl.shaderSource(vs, `
+    gl.shaderSource(
+      vs,
+      `
       attribute vec2 a;
       void main() {
         gl_Position = vec4(a, 0.0, 1.0);
       }
-    `);
+    `,
+    );
     gl.compileShader(vs);
 
-    gl.shaderSource(fs, `
+    gl.shaderSource(
+      fs,
+      `
       precision mediump float;
       void main() {
         gl_FragColor = vec4(0.671, 0.714, 0.020, 1.0);
       }
-    `);
+    `,
+    );
     gl.compileShader(fs);
 
     gl.attachShader(program, vs);
@@ -177,7 +216,7 @@ export default function SnakeGame(canvas) {
 
     // Vertical lines
     for (let i = 0; i <= cols; i++) {
-      const x = (i * boxSize) / canvas.width * 2 - 1;
+      const x = ((i * boxSize) / canvas.width) * 2 - 1;
       lines.push(
         x - lineThickness,
         -1,
@@ -196,7 +235,7 @@ export default function SnakeGame(canvas) {
 
     // Horizontal lines
     for (let i = 0; i <= rows; i++) {
-      const y = (i * boxSize) / canvas.height * 2 - 1;
+      const y = ((i * boxSize) / canvas.height) * 2 - 1;
       lines.push(
         -1,
         y - lineThickness,
@@ -225,32 +264,30 @@ export default function SnakeGame(canvas) {
   }
 
   function renderVignette() {
-    const vertices = new Float32Array([
-      -1, -1,
-      1, -1,
-      1, 1,
-      -1, -1,
-      1, 1,
-      -1, 1,
-    ]);
+    const vertices = new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]);
 
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
     const vs = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vs, `
+    gl.shaderSource(
+      vs,
+      `
       attribute vec2 a;
       varying vec2 vUv;
       void main() {
         vUv = a * 0.5 + 0.5;
         gl_Position = vec4(a, 0.0, 1.0);
       }
-    `);
+    `,
+    );
     gl.compileShader(vs);
 
     const fs = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fs, `
+    gl.shaderSource(
+      fs,
+      `
       precision mediump float;
       varying vec2 vUv;
       void main() {
@@ -258,7 +295,8 @@ export default function SnakeGame(canvas) {
         float vignette = smoothstep(0.5, 0.9, dist);
         gl_FragColor = vec4(0.0, 0.0, 0.0, vignette * 0.8);
       }
-    `);
+    `,
+    );
     gl.compileShader(fs);
 
     const program = gl.createProgram();
@@ -338,6 +376,6 @@ export default function SnakeGame(canvas) {
     requestAnimationFrame(loop);
   }
 
-  gl.clearColor(0.655, 0.690, 0.020, 1.0);
+  gl.clearColor(0.655, 0.69, 0.02, 1.0);
   requestAnimationFrame(loop);
 }
