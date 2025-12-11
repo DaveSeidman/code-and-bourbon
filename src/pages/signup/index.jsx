@@ -11,7 +11,7 @@ export default function SignUp({ user }) {
   const [userResponse, setUserResponse] = useState(null); // -1, 0, 1, or null
 
   // TODO: DRY
-  const BACKEND_URL =
+  const BACKEND_URL = 
     window.location.hostname === 'localhost'
       ? 'http://localhost:8000'
       : 'https://api.codeandbourbon.com';
@@ -91,18 +91,21 @@ export default function SignUp({ user }) {
 
   return (
     <div className="signup">
-      <a className="home" href="/">
-        🥃 &nbsp; Back Home
-      </a>
-      <h1>Sign Up</h1>
-
+      <header className="signup-header">
+        <a className="home" href="/">
+          🥃 &nbsp; Back Home
+        </a>
+        <h1>Sign Up</h1>
+      </header>
       {!event && <p>Select an event from the main page</p>}
 
       {event && (
         <div className="event">
           <h2 className="event-title">{event.theme}</h2>
           <div className="event-body">
-            <img className="event-body-photo" src={`../${event.photo}`} />
+            <div className="event-body-photo-container">
+              <img className="event-body-photo" src={`../${event.photo}`} />
+            </div>
             <p className="event-body-description">{event.description}</p>
           </div>
           <h3 className="events-event-content-title">

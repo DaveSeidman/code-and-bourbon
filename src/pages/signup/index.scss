@@ -1,7 +1,12 @@
 .signup {
-  margin: 4rem auto;
+  padding: 4rem;
   max-width: 1000px;
-  width: calc(100% - 8rem);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  position: relative;
+  box-sizing: border-box;
 
   .home {
     font-size: 24px;
@@ -11,27 +16,44 @@
     padding: 1rem 1rem 1rem 0;
   }
 
+  .signup-header {
+    width: 100%;
+  }
+
   h1 {
     margin: 0 !important;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .event {
-    width: calc(100% - 4rem);
-
+    width: 100%;
+    box-sizing: border-box;
     &-body {
+      box-sizing: border-box;
       display: flex;
       // flex-wrap: wrap;
       gap: 2rem;
       width: 100%;
 
       &-photo {
-        width: 400px;
-        height: 250px;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 40/25;
         object-fit: cover;
+        &-container {
+          box-sizing: border-box;
+          width: 100%;
+          max-width: 400px;
+          min-width: 40%;
+        }
       }
 
       &-description {
         line-height: 26px;
+        padding-right: 1rem;
+        text-wrap: pretty;
+        margin: 0;
       }
     }
 
@@ -57,7 +79,7 @@
 
 @media (max-width: 800px) {
   .signup {
-    margin: 2rem;
+    padding: 2rem;
 
     .home {
       top: 2rem;
