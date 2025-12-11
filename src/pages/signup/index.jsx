@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 import { formatDate } from '../../utils';
-import { ToastContainer, toast } from 'react-toastify'
 import './index.scss';
 
 export default function SignUp({ user }) {

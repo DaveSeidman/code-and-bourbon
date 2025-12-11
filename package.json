@@ -6,7 +6,10 @@
   "type": "module",
   "scripts": {
     "start": "vite",
-    "build": "vite build && cp dist/index.html dist/404.html"
+    "build": "vite build && cp dist/index.html dist/404.html",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write ."
   },
   "author": "",
   "license": "ISC",
@@ -25,13 +28,16 @@
     "vite": "^5.4.10"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^6.0.0",
     "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-react": "^7.37.4"
+    "eslint-plugin-react": "^7.37.4",
+    "prettier": "^3.7.4"
   },
   "eslintConfig": {
-    "extends": "airbnb",
+    "extends": ["airbnb", "prettier"],
     "env": {
       "es6": true,
       "browser": true
@@ -56,7 +62,9 @@
       "react/jsx-one-expression-per-line": 0,
       "react/no-array-index-key": 0,
       "max-classes-per-file": 0,
-      "indent": 0
+      "indent": 0,
+      "no-plusplus": 0,
+      "import/prefer-default-export": 0
     }
   }
 }
