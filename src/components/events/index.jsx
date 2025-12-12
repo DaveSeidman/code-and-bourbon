@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { formatDate } from '../../utils';
 import EventCard from '../EventCard';
 import './index.scss';
@@ -9,9 +10,10 @@ export default function Events() {
   // const navigate = useNavigate();
 
   const fetchData = async () => {
-    const BACKEND_URL = window.location.hostname === 'localhost'
-      ? 'http://localhost:8000'
-      : 'https://api.codeandbourbon.com';
+    const BACKEND_URL =
+      window.location.hostname === 'localhost'
+        ? 'http://localhost:8000'
+        : 'https://api.codeandbourbon.com';
 
     try {
       const fetchedEvents = await fetch(`${BACKEND_URL}/api/events`).then((res) => res.json());
@@ -46,14 +48,14 @@ export default function Events() {
             const featured = eventDate >= today;
 
             return (
-              <div
-                key={data._id}
-                className={`events-event ${featured ? 'featured' : ''}`}
-              >
+              <div key={data._id} className={`events-event ${featured ? 'featured' : ''}`}>
                 <EventCard data={data} featured={featured}></EventCard>
                 <div className="events-event-content">
                   <h3 className="events-event-content-title">
-                    {formatDate(data.date)} @ <a href={data.location.map} target="map">{data.location.name}</a>
+                    {formatDate(data.date)} @{' '}
+                    <a href={data.location.map} target="map">
+                      {data.location.name}
+                    </a>
                   </h3>
                   <p
                     className="events-event-content-description"

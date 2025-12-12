@@ -6,7 +6,7 @@
   position: relative;
   overflow: hidden;
   touch-action: manipulation;
-  
+
   .hero-snake {
     position: absolute;
     inset: 0;
@@ -14,50 +14,49 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  
+
     canvas {
       display: block;
       width: 100%;
       height: 100%;
     }
   }
-  
+
   .mobile-controls {
     display: none;
-  
+
     // @media (max-width: 1068px) {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      margin: 48px;
-      display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 48px;
+    display: block;
 
-      div {
-        width: 100%;
-        display: flex;
-        justify-content: center;
+    div {
+      width: 100%;
+      display: flex;
+      justify-content: center;
 
-        button {
-          background: #222;
-          color: rgba(255, 255, 255, .2);
-          margin: 2px;
-          border: none;
-          font-size: 1rem;
-          padding: 0;
-          width: 44px;
-          height: 44px;
-          line-height: 0;
-          text-align: center;
-          -webkit-tap-highlight-color: none;
+      button {
+        background: #222;
+        color: rgba(255, 255, 255, 0.2);
+        margin: 2px;
+        border: none;
+        font-size: 1rem;
+        padding: 0;
+        width: 44px;
+        height: 44px;
+        line-height: 0;
+        text-align: center;
+        -webkit-tap-highlight-color: none;
 
-          &:active {
-            background: #666;
-          }
+        &:active {
+          background: #666;
         }
       }
+    }
     // }
   }
-  
 
   &-logo {
     position: absolute;

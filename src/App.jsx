@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Hero from './components/hero';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+
 import About from './components/about';
 import Events from './components/events';
+import Footer from './components/footer';
+import Hero from './components/hero';
 import Join from './components/join';
 import User from './components/user';
-import Footer from './components/footer';
-import SignUp from './pages/signup';
 import './index.scss';
+import SignUp from './pages/signup';
 
 export default function App() {
   const basePath = import.meta.env.BASE_URL || '/';
-  const [user, setUser] = useState(localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null);
+  const [user, setUser] = useState(
+    localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null,
+  );
 
   useEffect(() => {
     if (user) localStorage.setItem('user', JSON.stringify(user));
-    else { localStorage.removeItem('user'); }
+    else {
+      localStorage.removeItem('user');
+    }
   }, [user]);
 
   useEffect(() => {
@@ -33,21 +38,16 @@ export default function App() {
         <Routes>
           <Route
             path="/signup/:eventId?"
-            element={(
+            element={
               <>
-                <SignUp
-                  user={user}
-                />
-                <User
-                  user={user}
-                  setUser={setUser}
-                />
+                <SignUp user={user} />
+                <User user={user} setUser={setUser} />
               </>
-            )}
+            }
           />
           <Route
             path="/?"
-            element={(
+            element={
               <>
                 <Hero />
                 <div className="pages">
@@ -56,31 +56,25 @@ export default function App() {
                   <Join />
                 </div>
                 <Footer />
-                <User
-                  user={user}
-                  setUser={setUser}
-                />
+                <User user={user} setUser={setUser} />
               </>
-            )}
-          />
-          <Route
-            path="/input"
-            element={
-              <div className="input" />
             }
           />
+          <Route path="/input" element={<div className="input" />} />
           <Route
             path="/output"
-            element={(
+            element={
               <div className="outout">
                 <h1>output</h1>
-                <p>Let's write a section about what Code & Bourbon can give back to the community. Finding a job or a mentor. Learning a new skill, etc.</p>
+                <p>
+                  Let's write a section about what Code & Bourbon can give back to the community.
+                  Finding a job or a mentor. Learning a new skill, etc.
+                </p>
               </div>
-            )}
+            }
           />
         </Routes>
       </div>
-
     </Router>
   );
 }
