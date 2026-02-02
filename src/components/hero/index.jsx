@@ -163,8 +163,11 @@ function VideoEnvironment({ radius = 12, height = 6, cubeMapSize = 256 }) {
   );
 }
 
-function GlassModel({ isMobile }) {
+function GlassModel({ isMobile, orbitVelRef }) {
   const { scene } = useGLTF(glassModel);
+  const innerRef = useRef();
+  const liquidRotation = useRef(0);
+  const liquidVelocity = useRef(0);
 
   const quality = useMemo(() => {
     // tweak these freely
@@ -199,6 +202,55 @@ function GlassModel({ isMobile }) {
     return meshes;
   }, [scene]);
 
+  // Find the "inner" group for liquid lag effect
+  const innerGroup = useMemo(() => {
+    let found = null;
+    scene.traverse((child) => {
+      if (child.name === "inner") {
+        found = child;
+      }
+    });
+    console.log("Inner group found:", found);
+    return found;
+  }, [scene]);
+
+  // Liquid lag physics
+  useFrame((_, dt) => {
+    if (!innerGroup || !orbitVelRef) return;
+
+    const orbitVel = orbitVelRef.current || 0;
+
+    // Spring physics for liquid lag
+    // The liquid "wants" to stay still (rotation 0) but gets dragged by orbit
+    const lagMultiplier = 2.5;  // How much the liquid exaggerates the movement
+    const stiffness = 3.0;      // How quickly it catches up
+    const damping = 0.85;       // How much velocity is retained
+    const maxRotation = 0.25;   // Max rotation in radians
+
+    // Target rotation based on current orbit velocity (opposite direction = lag)
+    const targetRotation = -orbitVel * lagMultiplier * 0.1;
+
+    // Spring force toward target
+    const springForce = (targetRotation - liquidRotation.current) * stiffness;
+
+    // Update velocity and apply damping
+    liquidVelocity.current += springForce * dt;
+    liquidVelocity.current *= damping;
+
+    // Update rotation
+    liquidRotation.current += liquidVelocity.current;
+
+    // Clamp rotation
+    liquidRotation.current = THREE.MathUtils.clamp(
+      liquidRotation.current,
+      -maxRotation,
+      maxRotation
+    );
+
+    // Apply to inner group
+    innerGroup.rotation.y = liquidRotation.current;
+  });
+
   return (
     <group>
       <primitive object={scene} />
@@ -216,7 +268,7 @@ function GlassModel({ isMobile }) {
               roughness={0.3}
               thickness={0.05}
               ior={1.4}
-              color={'rgb(206, 228, 226)'}
+              color={'rgb(236, 255, 253)'}
               chromaticAberration={quality.chromaticAberration}
               backside={true}
               backsideThickness={0.04}
@@ -303,8 +355,8 @@ function OrbitMomentum({ controlsRef, orbitVelRef }) {
   const isDragging = useRef(false);
   const lastAz = useRef(null);
 
-  const baseDrift = 0.10;  // rad/sec initial + minimum drift
-  const halfLife = 5.0;    // seconds
+  const baseDrift = 0.10;  // rad/sec minimum drift speed (direction preserved from swipe)
+  const halfLife = 0.3;    // seconds - how quickly it decelerates to baseDrift
   const maxRadPerSec = 1.2;
 
   const RAD_PER_SEC_PER_AUTOUNIT = (2 * Math.PI) / 60;
@@ -354,7 +406,7 @@ function OrbitMomentum({ controlsRef, orbitVelRef }) {
     );
 
     controls.autoRotate = true;
-    controls.autoRotateSpeed = orbitVelRef.current / RAD_PER_SEC_PER_AUTOUNIT;
+    controls.autoRotateSpeed = -orbitVelRef.current / RAD_PER_SEC_PER_AUTOUNIT;
     controls.update();
 
     invalidate(); // keep drifting visible with frameloop="demand"
@@ -410,6 +462,7 @@ export default function Hero() {
         <directionalLight position={[0, -5, 5]} intensity={2} />
 
         <OrbitControls
+          ref={controlsRef}
           enablePan={false}
           enableZoom={false}
           minPolarAngle={MIN_POLAR}
@@ -421,7 +474,7 @@ export default function Hero() {
 
         <CameraController baseFov={13} zoomFov={20} />
         <VideoEnvironment radius={12} height={12} cubeMapSize={256} />
-        <GlassModel isMobile={isMobile} />
+        <GlassModel isMobile={isMobile} orbitVelRef={orbitVelRef} />
       </Canvas>
 
       <img
