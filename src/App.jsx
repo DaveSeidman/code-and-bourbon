@@ -25,7 +25,6 @@ export default function App() {
 
   useEffect(() => {
     const userFromStorage = localStorage.getItem('user');
-    console.log({ userFromStorage });
     if (userFromStorage) {
       console.log('found user in storage, set state');
       setUser(JSON.parse(userFromStorage));
