@@ -1,13 +1,14 @@
 import { useMemo, useState, useRef, useEffect } from "react";
-import { Canvas, useLoader, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
-  Environment,
   OrbitControls,
   useGLTF,
   MeshTransmissionMaterial,
 } from "@react-three/drei";
 import * as THREE from "three";
 import glassModel from "../../assets/models/glass2.glb";
+import ringVideo from "../../assets/videos/ring1.mp4";
+import ringPoster from "../../assets/images/ring1-poster.png";
 import logo from "../../assets/images/logo.svg";
 import "./index.scss";
 
@@ -20,39 +21,145 @@ const isMobileDevice = () => {
   return touch && /iPhone|iPad|iPod|Android/i.test(ua);
 };
 
-function PhotoRing({ count = 6, radius = 10 }) {
-  const textures = useLoader(
-    THREE.TextureLoader,
-    Array.from({ length: count }, (_, i) => `/images/image${i + 1}.JPG`)
-  );
+function VideoEnvironment({ radius = 12, height = 6, cubeMapSize = 256 }) {
+  const { scene, gl, invalidate } = useThree();
+  const meshRef = useRef();
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  const photos = useMemo(() => {
-    return textures.map((texture, i) => {
-      const angle = (i / count) * Math.PI * 2;
-      const x = Math.sin(angle) * radius;
-      const z = Math.cos(angle) * radius;
+  // Create video and textures
+  const { video, videoTexture, posterTexture } = useMemo(() => {
+    // Poster texture
+    const posterTex = new THREE.TextureLoader().load(ringPoster);
+    posterTex.colorSpace = THREE.SRGBColorSpace;
+    posterTex.wrapS = THREE.RepeatWrapping;
+    posterTex.wrapT = THREE.ClampToEdgeWrapping;
+    posterTex.repeat.set(-1, 1);
+    posterTex.offset.set(1, 0);
 
-      return {
-        texture,
-        position: [x, -3.5, z],
-        rotation: [0, angle, 0],
-      };
+    // Video element
+    const vid = document.createElement("video");
+    vid.src = ringVideo;
+    vid.loop = true;
+    vid.muted = true;
+    vid.playsInline = true;
+    vid.crossOrigin = "anonymous";
+    vid.preload = "auto";
+
+    // Video texture
+    const vidTex = new THREE.VideoTexture(vid);
+    vidTex.colorSpace = THREE.SRGBColorSpace;
+    vidTex.wrapS = THREE.RepeatWrapping;
+    vidTex.wrapT = THREE.ClampToEdgeWrapping;
+    vidTex.repeat.set(-1, 1);
+    vidTex.offset.set(1, 0);
+
+    return { video: vid, videoTexture: vidTex, posterTexture: posterTex };
+  }, []);
+
+  // Cube camera setup for environment map
+  const { cubeCamera, cubeRenderTarget, envScene, envMesh } = useMemo(() => {
+    const target = new THREE.WebGLCubeRenderTarget(cubeMapSize, {
+      format: THREE.RGBAFormat,
+      generateMipmaps: true,
+      minFilter: THREE.LinearMipmapLinearFilter,
     });
-  }, [textures, count, radius]);
+
+    const camera = new THREE.CubeCamera(0.1, 100, target);
+
+    // Separate scene for env map rendering (just the cylinder)
+    const envScn = new THREE.Scene();
+    const geometry = new THREE.CylinderGeometry(radius, radius, height, 64, 1, true);
+    const material = new THREE.MeshBasicMaterial({
+      side: THREE.BackSide,
+      toneMapped: false,
+    });
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.y = -3.5;
+    envScn.add(mesh);
+
+    return { cubeCamera: camera, cubeRenderTarget: target, envScene: envScn, envMesh: mesh };
+  }, [radius, height, cubeMapSize]);
+
+  // Handle autoplay with fallback
+  useEffect(() => {
+    const tryPlay = async () => {
+      try {
+        await video.play();
+        setIsPlaying(true);
+        invalidate();
+      } catch (e) {
+        // Autoplay blocked - set up interaction listeners
+        const handleInteraction = async () => {
+          try {
+            await video.play();
+            setIsPlaying(true);
+            invalidate();
+          } catch (e2) {
+            console.warn("Video play failed:", e2);
+          }
+          document.removeEventListener("click", handleInteraction);
+          document.removeEventListener("touchstart", handleInteraction);
+          document.removeEventListener("pointerdown", handleInteraction);
+        };
+        document.addEventListener("click", handleInteraction, { once: true });
+        document.addEventListener("touchstart", handleInteraction, { once: true });
+        document.addEventListener("pointerdown", handleInteraction, { once: true });
+      }
+    };
+
+    if (video.readyState >= 3) {
+      tryPlay();
+    } else {
+      video.addEventListener("canplay", tryPlay, { once: true });
+    }
+
+    return () => {
+      video.pause();
+      video.src = "";
+      videoTexture.dispose();
+      posterTexture.dispose();
+      cubeRenderTarget.dispose();
+    };
+  }, [video, videoTexture, posterTexture, cubeRenderTarget, invalidate]);
+
+  // Update textures and env map each frame
+  useFrame(() => {
+    const activeTexture = isPlaying && video.readyState >= video.HAVE_CURRENT_DATA
+      ? videoTexture
+      : posterTexture;
+
+    // Update visible mesh
+    if (meshRef.current && meshRef.current.material.map !== activeTexture) {
+      meshRef.current.material.map = activeTexture;
+      meshRef.current.material.needsUpdate = true;
+    }
+
+    // Update env scene mesh
+    if (envMesh.material.map !== activeTexture) {
+      envMesh.material.map = activeTexture;
+      envMesh.material.needsUpdate = true;
+    }
+
+    if (isPlaying) {
+      videoTexture.needsUpdate = true;
+    }
+
+    // Render cube map and set as scene environment
+    cubeCamera.update(gl, envScene);
+    scene.environment = cubeRenderTarget.texture;
+
+    invalidate();
+  });
 
   return (
-    <group>
-      {photos.map((photo, i) => (
-        <mesh key={i} position={photo.position} rotation={photo.rotation}>
-          <planeGeometry args={[18, 13]} />
-          <meshBasicMaterial
-            map={photo.texture}
-            side={THREE.BackSide}
-            toneMapped={false}
-          />
-        </mesh>
-      ))}
-    </group>
+    <mesh ref={meshRef} position={[0, -3.5, 0]}>
+      <cylinderGeometry args={[radius, radius, height, 64, 1, true]} />
+      <meshBasicMaterial
+        map={posterTexture}
+        side={THREE.BackSide}
+        toneMapped={false}
+      />
+    </mesh>
   );
 }
 
@@ -67,14 +174,14 @@ function GlassModel({ isMobile }) {
         transmissionResolution: 128,
         chromaticAberration: 0.0,
         distortion: 0.25,
-        envMapIntensityThin: 5,
+        envMapIntensityThin: 10,
       }
       : {
         transmissionSamples: 4,
         transmissionResolution: 512,
         chromaticAberration: 0.2,
         distortion: 0.8,
-        envMapIntensityThin: 15,
+        envMapIntensityThin: 25,
       };
   }, [isMobile]);
 
@@ -119,7 +226,7 @@ function GlassModel({ isMobile }) {
               distortionScale={0.1}
               clearcoat={0.4}
               clearcoatRoughness={0.2}
-              envMapIntensity={0.1}
+              envMapIntensity={4.0}
             />
           ) : (
             <meshPhysicalMaterial
@@ -297,11 +404,10 @@ export default function Hero() {
         }}
         style={{ position: "absolute", top: 0, left: 0 }}
       >
-        <Environment preset="sunset" background environmentIntensity={1} environmentRotation={[0, 3.8, 0]} />
-        {/* <ambientLight intensity={0.5} /> */}
-        <directionalLight position={[2, -10, 0]} intensity={.5} />
-        <directionalLight position={[-5, 5, -5]} intensity={1.5} />
-        <ambientLight intensity={-5} />
+        <ambientLight intensity={15} />
+        <directionalLight position={[2, 10, 0]} intensity={8} />
+        <directionalLight position={[-5, 5, -5]} intensity={3} />
+        <directionalLight position={[0, -5, 5]} intensity={2} />
 
         <OrbitControls
           enablePan={false}
@@ -314,7 +420,7 @@ export default function Hero() {
 
 
         <CameraController baseFov={13} zoomFov={20} />
-        <PhotoRing count={6} radius={12} />
+        <VideoEnvironment radius={12} height={12} cubeMapSize={256} />
         <GlassModel isMobile={isMobile} />
       </Canvas>
 

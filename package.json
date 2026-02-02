@@ -16,10 +16,12 @@
   "dependencies": {
     "@react-three/drei": "^9.121.5",
     "@react-three/fiber": "^8.17.14",
+    "@react-three/postprocessing": "^2.16.3",
     "@red_j/webgl-fluid-sim": "^1.0.6",
     "@vitejs/plugin-react": "^4.3.1",
     "asciify-image": "^0.1.10",
     "axios": "^1.7.9",
+    "postprocessing": "^6.36.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.4",
