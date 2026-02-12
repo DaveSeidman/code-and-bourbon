@@ -1,12 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-import logoImg from '../../assets/images/logo.svg';
-import './index.scss';
 import SnakeGame from './snake-game';
+import logoImg from '~/assets/images/logo.svg';
 
-export default function Hero() {
-  const canvasRef = useRef(null);
-  const resizeTimeout = useRef(null);
+import './index.scss';
+
+export default function HeroOld() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const resizeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const runGame = () => {
@@ -16,18 +17,18 @@ export default function Hero() {
     runGame();
 
     const handleResize = () => {
-      clearTimeout(resizeTimeout.current);
+      if (resizeTimeout.current) clearTimeout(resizeTimeout.current);
       resizeTimeout.current = setTimeout(runGame, 100);
     };
 
     window.addEventListener('resize', handleResize);
     return () => {
-      clearTimeout(resizeTimeout.current);
+      if (resizeTimeout.current) clearTimeout(resizeTimeout.current);
       window.removeEventListener('resize', handleResize);
     };
   }, []);
 
-  const handleDirection = (x, y) => {
+  const handleDirection = (x: number, y: number) => {
     const event = new KeyboardEvent('keydown', {
       key:
         y === -1
@@ -48,15 +49,15 @@ export default function Hero() {
       <div className="hero-snake">
         <canvas ref={canvasRef} />
       </div>
-      <img className="hero-logo" src={logoImg} />
+      <img className="hero-logo" src={logoImg} alt="Code and Bourbon" />
       <div className="mobile-controls">
         <div>
-          <button onClick={() => handleDirection(0, -1)}>▲</button>
+          <button type="button" onClick={() => handleDirection(0, -1)}>▲</button>
         </div>
         <div>
-          <button onClick={() => handleDirection(-1, 0)}>◀</button>
-          <button onClick={() => handleDirection(0, 1)}>▼</button>
-          <button onClick={() => handleDirection(1, 0)}>▶</button>
+          <button type="button" onClick={() => handleDirection(-1, 0)}>◀</button>
+          <button type="button" onClick={() => handleDirection(0, 1)}>▼</button>
+          <button type="button" onClick={() => handleDirection(1, 0)}>▶</button>
         </div>
       </div>
     </div>

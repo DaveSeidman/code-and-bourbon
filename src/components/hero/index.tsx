@@ -1,34 +1,51 @@
-import { useMemo, useState, useRef, useEffect } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
+  MeshTransmissionMaterial,
   OrbitControls,
   useGLTF,
-  MeshTransmissionMaterial,
-} from "@react-three/drei";
-import * as THREE from "three";
-import glassModel from "../../assets/models/glass2.glb";
-import ringVideo from "../../assets/videos/ring1.mp4";
-import ringPoster from "../../assets/images/ring1-poster.png";
-import logo from "../../assets/images/logo.svg";
-import "./index.scss";
+} from '@react-three/drei';
+import * as THREE from 'three';
 
-const isMobileDevice = () => {
-  if (typeof navigator === "undefined") return false;
-  const ua = navigator.userAgent || "";
+import glassModel from '~/assets/models/glass2.glb';
+import ringVideo from '~/assets/videos/ring1.mp4';
+import ringPoster from '~/assets/images/ring1-poster.png';
+import logo from '~/assets/images/logo.svg';
+
+import './index.scss';
+
+interface OrbitControlsRef {
+  getAzimuthalAngle: () => number;
+  autoRotate: boolean;
+  autoRotateSpeed: number;
+  update: () => void;
+}
+
+const isMobileDevice = (): boolean => {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
   const touch =
-    typeof window !== "undefined" &&
-    ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+    typeof window !== 'undefined' &&
+    ('ontouchstart' in window || navigator.maxTouchPoints > 0);
   return touch && /iPhone|iPad|iPod|Android/i.test(ua);
 };
 
-function VideoEnvironment({ radius = 12, height = 6, cubeMapSize = 256 }) {
+type VideoEnvironmentProps = {
+  radius?: number;
+  height?: number;
+  cubeMapSize?: number;
+};
+
+function VideoEnvironment({
+  radius = 12,
+  height = 6,
+  cubeMapSize = 256,
+}: VideoEnvironmentProps) {
   const { scene, gl, invalidate } = useThree();
-  const meshRef = useRef();
+  const meshRef = useRef<THREE.Mesh>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Create video and textures
   const { video, videoTexture, posterTexture } = useMemo(() => {
-    // Poster texture
     const posterTex = new THREE.TextureLoader().load(ringPoster);
     posterTex.colorSpace = THREE.SRGBColorSpace;
     posterTex.wrapS = THREE.RepeatWrapping;
@@ -36,16 +53,14 @@ function VideoEnvironment({ radius = 12, height = 6, cubeMapSize = 256 }) {
     posterTex.repeat.set(-1, 1);
     posterTex.offset.set(1, 0);
 
-    // Video element
-    const vid = document.createElement("video");
+    const vid = document.createElement('video');
     vid.src = ringVideo;
     vid.loop = true;
     vid.muted = true;
     vid.playsInline = true;
-    vid.crossOrigin = "anonymous";
-    vid.preload = "auto";
+    vid.crossOrigin = 'anonymous';
+    vid.preload = 'auto';
 
-    // Video texture
     const vidTex = new THREE.VideoTexture(vid);
     vidTex.colorSpace = THREE.SRGBColorSpace;
     vidTex.wrapS = THREE.RepeatWrapping;
@@ -56,7 +71,6 @@ function VideoEnvironment({ radius = 12, height = 6, cubeMapSize = 256 }) {
     return { video: vid, videoTexture: vidTex, posterTexture: posterTex };
   }, []);
 
-  // Cube camera setup for environment map
   const { cubeCamera, cubeRenderTarget, envScene, envMesh } = useMemo(() => {
     const target = new THREE.WebGLCubeRenderTarget(cubeMapSize, {
       format: THREE.RGBAFormat,
@@ -66,7 +80,6 @@ function VideoEnvironment({ radius = 12, height = 6, cubeMapSize = 256 }) {
 
     const camera = new THREE.CubeCamera(0.1, 100, target);
 
-    // Separate scene for env map rendering (just the cylinder)
     const envScn = new THREE.Scene();
     const geometry = new THREE.CylinderGeometry(radius, radius, height, 64, 1, true);
     const material = new THREE.MeshBasicMaterial({
@@ -80,61 +93,60 @@ function VideoEnvironment({ radius = 12, height = 6, cubeMapSize = 256 }) {
     return { cubeCamera: camera, cubeRenderTarget: target, envScene: envScn, envMesh: mesh };
   }, [radius, height, cubeMapSize]);
 
-  // Handle autoplay with fallback
   useEffect(() => {
     const tryPlay = async () => {
       try {
         await video.play();
         setIsPlaying(true);
         invalidate();
-      } catch (e) {
-        // Autoplay blocked - set up interaction listeners
+      } catch {
         const handleInteraction = async () => {
           try {
             await video.play();
             setIsPlaying(true);
             invalidate();
           } catch (e2) {
-            console.warn("Video play failed:", e2);
+            console.warn('Video play failed:', e2);
           }
-          document.removeEventListener("click", handleInteraction);
-          document.removeEventListener("touchstart", handleInteraction);
-          document.removeEventListener("pointerdown", handleInteraction);
+          document.removeEventListener('click', handleInteraction);
+          document.removeEventListener('touchstart', handleInteraction);
+          document.removeEventListener('pointerdown', handleInteraction);
         };
-        document.addEventListener("click", handleInteraction, { once: true });
-        document.addEventListener("touchstart", handleInteraction, { once: true });
-        document.addEventListener("pointerdown", handleInteraction, { once: true });
+        document.addEventListener('click', handleInteraction, { once: true });
+        document.addEventListener('touchstart', handleInteraction, { once: true });
+        document.addEventListener('pointerdown', handleInteraction, { once: true });
       }
     };
 
     if (video.readyState >= 3) {
       tryPlay();
     } else {
-      video.addEventListener("canplay", tryPlay, { once: true });
+      video.addEventListener('canplay', tryPlay, { once: true });
     }
 
     return () => {
       video.pause();
-      video.src = "";
+      video.src = '';
       videoTexture.dispose();
       posterTexture.dispose();
       cubeRenderTarget.dispose();
     };
   }, [video, videoTexture, posterTexture, cubeRenderTarget, invalidate]);
 
-  // Update textures and env map each frame
   useFrame(() => {
-    const activeTexture = isPlaying && video.readyState >= video.HAVE_CURRENT_DATA
-      ? videoTexture
-      : posterTexture;
+    const activeTexture =
+      isPlaying && video.readyState >= video.HAVE_CURRENT_DATA
+        ? videoTexture
+        : posterTexture;
 
-    // Update visible mesh
-    if (meshRef.current && meshRef.current.material.map !== activeTexture) {
-      meshRef.current.material.map = activeTexture;
-      meshRef.current.material.needsUpdate = true;
+    if (meshRef.current) {
+      const mat = meshRef.current.material as THREE.MeshBasicMaterial;
+      if (mat.map !== activeTexture) {
+        mat.map = activeTexture;
+        mat.needsUpdate = true;
+      }
     }
 
-    // Update env scene mesh
     if (envMesh.material.map !== activeTexture) {
       envMesh.material.map = activeTexture;
       envMesh.material.needsUpdate = true;
@@ -144,7 +156,6 @@ function VideoEnvironment({ radius = 12, height = 6, cubeMapSize = 256 }) {
       videoTexture.needsUpdate = true;
     }
 
-    // Render cube map and set as scene environment
     cubeCamera.update(gl, envScene);
     scene.environment = cubeRenderTarget.texture;
 
@@ -163,37 +174,42 @@ function VideoEnvironment({ radius = 12, height = 6, cubeMapSize = 256 }) {
   );
 }
 
-function GlassModel({ isMobile, orbitVelRef }) {
+type GlassModelProps = {
+  isMobile: boolean;
+  orbitVelRef: React.MutableRefObject<number>;
+};
+
+function GlassModel({ isMobile, orbitVelRef }: GlassModelProps) {
   const { scene } = useGLTF(glassModel);
-  const innerRef = useRef();
   const liquidRotation = useRef(0);
   const liquidVelocity = useRef(0);
 
-  const quality = useMemo(() => {
-    // tweak these freely
-    return isMobile
-      ? {
-        transmissionSamples: 1,
-        transmissionResolution: 128,
-        chromaticAberration: 0.0,
-        distortion: 0.25,
-        envMapIntensityThin: 10,
-      }
-      : {
-        transmissionSamples: 4,
-        transmissionResolution: 512,
-        chromaticAberration: 0.2,
-        distortion: 0.8,
-        envMapIntensityThin: 25,
-      };
-  }, [isMobile]);
+  const quality = useMemo(
+    () =>
+      isMobile
+        ? {
+            transmissionSamples: 1,
+            transmissionResolution: 128,
+            chromaticAberration: 0.0,
+            distortion: 0.25,
+            envMapIntensityThin: 10,
+          }
+        : {
+            transmissionSamples: 4,
+            transmissionResolution: 512,
+            chromaticAberration: 0.2,
+            distortion: 0.8,
+            envMapIntensityThin: 25,
+          },
+    [isMobile],
+  );
 
   const glassMeshes = useMemo(() => {
-    const meshes = [];
-    scene.traverse((child) => {
-      if (child.isMesh) {
-        const name = child.material?.name;
-        if (name === "glass-thick" || (name && name.includes("glass-thin"))) {
+    const meshes: Array<{ mesh: THREE.Mesh; type: string }> = [];
+    scene.traverse((child: THREE.Object3D) => {
+      if (child instanceof THREE.Mesh) {
+        const name = (child.material as THREE.Material).name;
+        if (name === 'glass-thick' || (name && name.includes('glass-thin'))) {
           meshes.push({ mesh: child, type: name });
           child.visible = false;
         }
@@ -202,52 +218,43 @@ function GlassModel({ isMobile, orbitVelRef }) {
     return meshes;
   }, [scene]);
 
-  // Find the "inner" group for liquid lag effect
   const innerGroup = useMemo(() => {
-    let found = null;
-    scene.traverse((child) => {
-      if (child.name === "inner") {
+    let found: THREE.Object3D | null = null;
+    scene.traverse((child: THREE.Object3D) => {
+      if (child.name === 'inner') {
         found = child;
       }
     });
-    console.log("Inner group found:", found);
     return found;
   }, [scene]);
 
-  // Liquid lag physics
   useFrame((_, dt) => {
-    if (!innerGroup || !orbitVelRef) return;
+    // inner may be absent in some GLB variants; guard kept for runtime safety
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- runtime guard
+    if (innerGroup == null) return;
 
-    const orbitVel = orbitVelRef.current || 0;
+    const orbitVel = orbitVelRef.current;
 
-    // Spring physics for liquid lag
-    // The liquid "wants" to stay still (rotation 0) but gets dragged by orbit
-    const lagMultiplier = 2.5;  // How much the liquid exaggerates the movement
-    const stiffness = 3.0;      // How quickly it catches up
-    const damping = 0.85;       // How much velocity is retained
-    const maxRotation = 0.25;   // Max rotation in radians
+    const lagMultiplier = 2.5;
+    const stiffness = 3.0;
+    const damping = 0.85;
+    const maxRotation = 0.25;
 
-    // Target rotation based on current orbit velocity (opposite direction = lag)
     const targetRotation = -orbitVel * lagMultiplier * 0.1;
 
-    // Spring force toward target
     const springForce = (targetRotation - liquidRotation.current) * stiffness;
 
-    // Update velocity and apply damping
     liquidVelocity.current += springForce * dt;
     liquidVelocity.current *= damping;
 
-    // Update rotation
     liquidRotation.current += liquidVelocity.current;
 
-    // Clamp rotation
     liquidRotation.current = THREE.MathUtils.clamp(
       liquidRotation.current,
       -maxRotation,
-      maxRotation
+      maxRotation,
     );
 
-    // Apply to inner group
     innerGroup.rotation.y = liquidRotation.current;
   });
 
@@ -262,13 +269,13 @@ function GlassModel({ isMobile, orbitVelRef }) {
           rotation={mesh.rotation}
           scale={mesh.scale}
         >
-          {type === "glass-thick" ? (
+          {type === 'glass-thick' ? (
             <MeshTransmissionMaterial
               transmission={1}
               roughness={0.3}
               thickness={0.05}
               ior={1.4}
-              color={'rgb(236, 255, 253)'}
+              color="rgb(236, 255, 253)"
               chromaticAberration={quality.chromaticAberration}
               backside={true}
               backsideThickness={0.04}
@@ -297,7 +304,12 @@ function GlassModel({ isMobile, orbitVelRef }) {
   );
 }
 
-function CameraController({ baseFov = 20, zoomFov = 35 }) {
+type CameraControllerProps = {
+  baseFov?: number;
+  zoomFov?: number;
+};
+
+function CameraController({ baseFov = 20, zoomFov = 35 }: CameraControllerProps) {
   const { camera, gl, invalidate } = useThree();
   const [isDown, setIsDown] = useState(false);
   const velocity = useRef(0);
@@ -306,7 +318,6 @@ function CameraController({ baseFov = 20, zoomFov = 35 }) {
   useFrame(() => {
     const target = isDown ? zoomFov : baseFov;
 
-    // Your original values
     const stiffness = 0.25;
     const damping = 0.55;
 
@@ -318,7 +329,6 @@ function CameraController({ baseFov = 20, zoomFov = 35 }) {
     camera.fov = currentFov.current;
     camera.updateProjectionMatrix();
 
-    // Keep demand-rendering alive only while we're still moving
     if (Math.abs(displacement) > 0.0005 || Math.abs(velocity.current) > 0.0005) {
       invalidate();
     }
@@ -336,44 +346,49 @@ function CameraController({ baseFov = 20, zoomFov = 35 }) {
       invalidate();
     };
 
-    canvas.addEventListener("pointerdown", handleDown);
-    window.addEventListener("pointerup", handleUp);
-    canvas.addEventListener("pointerleave", handleUp);
+    canvas.addEventListener('pointerdown', handleDown);
+    window.addEventListener('pointerup', handleUp);
+    canvas.addEventListener('pointerleave', handleUp);
 
     return () => {
-      canvas.removeEventListener("pointerdown", handleDown);
-      window.removeEventListener("pointerup", handleUp);
-      canvas.removeEventListener("pointerleave", handleUp);
+      canvas.removeEventListener('pointerdown', handleDown);
+      window.removeEventListener('pointerup', handleUp);
+      canvas.removeEventListener('pointerleave', handleUp);
     };
   }, [gl, invalidate]);
 
   return null;
 }
 
-function OrbitMomentum({ controlsRef, orbitVelRef }) {
+type OrbitMomentumProps = {
+  controlsRef: React.MutableRefObject<OrbitControlsRef | null>;
+  orbitVelRef: React.MutableRefObject<number>;
+};
+
+const wrapDelta = (d: number): number =>
+  THREE.MathUtils.euclideanModulo(d + Math.PI, Math.PI * 2) - Math.PI;
+
+function OrbitMomentum({ controlsRef, orbitVelRef }: OrbitMomentumProps) {
   const { invalidate } = useThree();
   const isDragging = useRef(false);
-  const lastAz = useRef(null);
+  const lastAz = useRef<number | null>(null);
 
-  const baseDrift = 0.10;  // rad/sec minimum drift speed (direction preserved from swipe)
-  const halfLife = 0.3;    // seconds - how quickly it decelerates to baseDrift
+  const baseDrift = 0.1;
+  const halfLife = 0.3;
   const maxRadPerSec = 1.2;
 
   const RAD_PER_SEC_PER_AUTOUNIT = (2 * Math.PI) / 60;
-
-  const wrapDelta = (d) =>
-    THREE.MathUtils.euclideanModulo(d + Math.PI, Math.PI * 2) - Math.PI;
 
   useEffect(() => {
     const down = () => (isDragging.current = true);
     const up = () => (isDragging.current = false);
 
-    window.addEventListener("pointerdown", down, { passive: true });
-    window.addEventListener("pointerup", up, { passive: true });
+    window.addEventListener('pointerdown', down, { passive: true });
+    window.addEventListener('pointerup', up, { passive: true });
 
     return () => {
-      window.removeEventListener("pointerdown", down);
-      window.removeEventListener("pointerup", up);
+      window.removeEventListener('pointerdown', down);
+      window.removeEventListener('pointerup', up);
     };
   }, []);
 
@@ -402,22 +417,20 @@ function OrbitMomentum({ controlsRef, orbitVelRef }) {
     orbitVelRef.current = THREE.MathUtils.clamp(
       orbitVelRef.current,
       -maxRadPerSec,
-      maxRadPerSec
+      maxRadPerSec,
     );
 
     controls.autoRotate = true;
     controls.autoRotateSpeed = -orbitVelRef.current / RAD_PER_SEC_PER_AUTOUNIT;
     controls.update();
 
-    invalidate(); // keep drifting visible with frameloop="demand"
+    invalidate();
     lastAz.current = controls.getAzimuthalAngle();
   });
 
   return null;
 }
 
-
-// Camera elevation: 15 degrees above horizontal = polar angle of 75 degrees
 const ELEVATION_DEG = 15;
 const VERTICAL_RANGE_DEG = 7.5;
 const CENTER_POLAR = Math.PI / 2 - (ELEVATION_DEG * Math.PI) / 180;
@@ -428,13 +441,12 @@ const DISTANCE = 12;
 export default function Hero() {
   const isMobile = useMemo(() => isMobileDevice(), []);
 
-  const controlsRef = useRef();
+  const controlsRef = useRef<OrbitControlsRef | null>(null);
   const orbitVelRef = useRef(0);
 
   const initialY = Math.sin((ELEVATION_DEG * Math.PI) / 180) * DISTANCE;
   const initialZ = Math.cos((ELEVATION_DEG * Math.PI) / 180) * DISTANCE;
 
-  // DPR: keep mobile capped at 1.0; desktop can go higher if you want
   const dpr = useMemo(() => (isMobile ? [0.6, 1.0] : [1.0, 1.5]), [isMobile]);
 
   return (
@@ -450,11 +462,11 @@ export default function Hero() {
         dpr={dpr}
         gl={{
           antialias: false,
-          powerPreference: "high-performance",
+          powerPreference: 'high-performance',
           alpha: false,
           stencil: false,
         }}
-        style={{ position: "absolute", top: 0, left: 0 }}
+        style={{ position: 'absolute', top: 0, left: 0 }}
       >
         <ambientLight intensity={15} />
         <directionalLight position={[2, 10, 0]} intensity={8} />
@@ -471,7 +483,6 @@ export default function Hero() {
 
         <OrbitMomentum controlsRef={controlsRef} orbitVelRef={orbitVelRef} />
 
-
         <CameraController baseFov={13} zoomFov={20} />
         <VideoEnvironment radius={12} height={12} cubeMapSize={256} />
         <GlassModel isMobile={isMobile} orbitVelRef={orbitVelRef} />
@@ -482,17 +493,12 @@ export default function Hero() {
         src={logo}
         alt="Code and Bourbon Logo"
         draggable={false}
-        onContextMenu={(e) => { e.preventDefault(); e.stopPropagation() }}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
         onDragStart={(e) => e.preventDefault()}
         onTouchStart={(e) => e.preventDefault()}
-      // style={{
-      //   WebkitTouchCallout: "none",
-      //   WebkitUserSelect: "none",
-      //   userSelect: "none",
-      //   WebkitUserDrag: "none",
-      //   touchAction: "none",
-      //   WebkitTapHighlightColor: "transparent",
-      // }}
       />
     </div>
   );

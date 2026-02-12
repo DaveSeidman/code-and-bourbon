@@ -1,8 +1,10 @@
 import React from 'react';
 
+import type { Event } from '~/lib/db/types';
+
 import './index.scss';
 
-export default function EventCard({ data, featured }) {
+export default function EventCard({ data, featured }: { data: Event; featured: boolean }) {
   return (
     <div className="event-card">
       <img className="event-card-image" src={data.photo} alt={`Event ${data.theme}`} />

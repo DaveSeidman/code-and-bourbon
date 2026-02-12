@@ -4,3 +4,5 @@ node_modules
 .env
 etc
 .tanstack
+!.env.example
+old-backend

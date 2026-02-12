@@ -1,30 +1,14 @@
-import { useEffect, useState } from 'react';
+import EventCard from '~/components/EventCard';
+import type { Event } from '~/lib/db/types';
+import { formatDate } from '~/utils';
 
-import { formatDate } from '../../utils';
-import EventCard from '../EventCard';
 import './index.scss';
 
-export default function Events() {
-  const [events, setEvents] = useState([]);
-  // const navigate = useNavigate();
+type EventsProps = {
+  events: Array<Event>;
+};
 
-  const fetchData = async () => {
-    const BACKEND_URL = 'https://api.codeandbourbon.com';
-
-    try {
-      const fetchedEvents = await fetch(`${BACKEND_URL}/api/events`).then((res) => res.json());
-      console.log(fetchedEvents);
-      setEvents(fetchedEvents);
-    } catch (err) {
-      console.log('cms unreachable');
-      // setEvents([]);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
+export default function Events({ events }: EventsProps) {
   const sortedEvents = [...events].sort((a, b) => (a.date > b.date ? -1 : 1));
 
   return (
@@ -32,10 +16,9 @@ export default function Events() {
       <h1>Events</h1>
       <div className="events">
         {events.length === 0 ? (
-          <div className="events-loading">Loading events...</div>
+          <div className="events-error">No events!</div>
         ) : (
-          sortedEvents.map((data, index) => {
-            // const prefix = `🥃 Round ${sortedEvents.length - index}: `;
+          sortedEvents.map((data) => {
             const [year, month, day] = data.date.split('-').map(Number);
             const eventDate = new Date(year, month - 1, day);
             const today = new Date();
@@ -45,12 +28,12 @@ export default function Events() {
 
             return (
               <div key={data._id} className={`events-event ${featured ? 'featured' : ''}`}>
-                <EventCard data={data} featured={featured}></EventCard>
+                <EventCard data={data} featured={featured} />
                 <div className="events-event-content">
                   <h3 className="events-event-content-title">
                     {formatDate(data.date)} @{' '}
-                    <a href={data.location.map} target="map">
-                      {data.location.name}
+                    <a href={data.location?.map} target="map" rel="noreferrer">
+                      {data.location?.name}
                     </a>
                   </h3>
                   <p

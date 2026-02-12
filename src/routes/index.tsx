@@ -1,29 +1,38 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { useUser } from '~/auth/useUser';
 import About from '~/components/about';
 import Events from '~/components/events';
 import Footer from '~/components/footer';
 import Hero from '~/components/hero';
 import Join from '~/components/join';
-import User from '~/components/user';
+import type { Event } from '~/lib/db/types';
+import { getEvents } from '~/server';
 
-const HomePage = () => {
-  const { user, setUser } = useUser();
+export const Route = createFileRoute('/')({
+  loader: async (): Promise<{ events: Array<Event> }> => {
+    let events: Array<Event> = [];
+    try {
+      events = await getEvents();
+    } catch (error) {
+      console.error('Failed to load events', error);
+    }
+    return { events };
+  },
+  component: HomePage,
+});
+
+function HomePage() {
+  const { events } = Route.useLoaderData();
+
   return (
     <>
       <Hero />
       <div className="pages">
         <About />
-        <Events />
+        <Events events={events} />
         <Join />
       </div>
       <Footer />
-      <User user={user} setUser={setUser} />
     </>
   );
-};
-
-export const Route = createFileRoute('/')({
-  component: HomePage,
-});
+}
