@@ -6,3 +6,4 @@ etc
 .tanstack
 !.env.example
 old-backend
+.output
