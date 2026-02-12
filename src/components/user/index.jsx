@@ -4,10 +4,7 @@ import React, { useEffect, useState } from 'react';
 import './index.scss';
 
 export default function User({ user, setUser }) {
-  const BACKEND_URL =
-    window.location.hostname === 'localhost'
-      ? 'http://localhost:8000'
-      : 'https://api.codeandbourbon.com';
+  const BACKEND_URL = 'https://api.codeandbourbon.com';
 
   useEffect(() => {
     axios

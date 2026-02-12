@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "vite",
+    "dev": "vite dev",
     "build": "vite build && cp dist/index.html dist/404.html",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -18,58 +19,31 @@
     "@react-three/fiber": "^8.17.14",
     "@react-three/postprocessing": "^2.16.3",
     "@red_j/webgl-fluid-sim": "^1.0.6",
-    "@vitejs/plugin-react": "^4.3.1",
-    "asciify-image": "^0.1.10",
-    "axios": "^1.7.9",
+    "@tanstack/react-router": "^1.159.5",
+    "@tanstack/react-start": "^1.159.5",
+    "@vitejs/plugin-react": "^5.1.4",
+    "asciify-image": "^0.1.1",
+    "axios": "^1.13.5",
     "postprocessing": "^6.36.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^7.1.4",
     "react-toastify": "^11.0.5",
     "sass": "^1.83.4",
-    "vite": "^5.4.10"
+    "vite": "^7.3.1"
   },
   "devDependencies": {
+    "@tanstack/eslint-config": "^0.3.4",
     "@trivago/prettier-plugin-sort-imports": "^6.0.0",
-    "eslint": "^8.57.1",
-    "eslint-config-airbnb": "^19.0.4",
+    "@types/node": "^25.2.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react": "^7.37.4",
-    "prettier": "^3.7.4"
-  },
-  "eslintConfig": {
-    "extends": [
-      "airbnb",
-      "prettier"
-    ],
-    "env": {
-      "es6": true,
-      "browser": true
-    },
-    "parserOptions": {
-      "ecmaVersion": 2022,
-      "sourceType": "module"
-    },
-    "rules": {
-      "max-len": 0,
-      "object-curly-newline": 0,
-      "no-console": 0,
-      "no-restricted-globals": 0,
-      "no-param-reassign": 0,
-      "no-unsafe-optional-chaining": 0,
-      "consistent-return": 0,
-      "radix": 0,
-      "jsx-a11y/control-has-associated-label": 0,
-      "jsx-a11y/alt-text": 0,
-      "react/prop-types": 0,
-      "react/no-unescaped-entities": 0,
-      "react/jsx-one-expression-per-line": 0,
-      "react/no-array-index-key": 0,
-      "max-classes-per-file": 0,
-      "indent": 0,
-      "no-plusplus": 0,
-      "import/prefer-default-export": 0
-    }
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.55.0",
+    "vite-tsconfig-paths": "^6.1.1"
   }
 }
