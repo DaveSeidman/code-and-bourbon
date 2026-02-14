@@ -4,7 +4,7 @@ const config = {
   printWidth: 100,
   singleQuote: true,
   arrowParens: 'always',
-  importOrder: ['<THIRD_PARTY_MODULES>', '^~/(.*)$', '^[./]'],
+  importOrder: ['<THIRD_PARTY_MODULES>', '<TS_TYPES>^~/(.*)$', '^~/(.*)$', '^[./]'],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true,
 };
