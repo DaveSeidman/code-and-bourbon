@@ -82,17 +82,8 @@ export default function SignUp({ user }) {
     fetchData();
   }, [eventId, user]);
 
-  // Correct date-only comparison (true only if event was before today)
   const eventHasPassed = event
-    ? (() => {
-      const eventDate = new Date(event.date);
-      const today = new Date();
-
-      eventDate.setHours(0, 0, 0, 0);
-      today.setHours(0, 0, 0, 0);
-
-      return eventDate < today;
-    })()
+    ? event.date < new Date().toISOString().slice(0, 10)
     : false;
 
   return (
