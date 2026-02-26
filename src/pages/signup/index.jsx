@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
@@ -10,13 +10,10 @@ export default function SignUp({ user }) {
   const [event, setEvent] = useState(null);
   const [userResponse, setUserResponse] = useState(null); // -1, 0, 1, or null
 
-  // TODO: DRY
-  const BACKEND_URL = 
+  const BACKEND_URL =
     window.location.hostname === 'localhost'
       ? 'http://localhost:8000'
       : 'https://api.codeandbourbon.com';
-
-  const eventHasPassed = useRef(true);
 
   // Load event + signup
   const fetchData = async () => {
@@ -30,16 +27,14 @@ export default function SignUp({ user }) {
 
       setEvent(fetchedEvent);
 
-      const eventDate = new Date(fetchedEvent.date);
-      const today = new Date();
-      // console.log(eventDate, today, eventDate >= today)
-      eventHasPassed.current = eventDate < today;
-
       // If user logged in, fetch their signup
       if (user?._id) {
-        const signup = await fetch(`${BACKEND_URL}/api/signups?eventId=${eventId}`, {
-          credentials: 'include',
-        }).then((res) => res.json());
+        const signup = await fetch(
+          `${BACKEND_URL}/api/signups?eventId=${eventId}`,
+          {
+            credentials: 'include',
+          }
+        ).then((res) => res.json());
 
         if (signup && typeof signup.status === 'number') {
           setUserResponse(signup.status);
@@ -87,7 +82,18 @@ export default function SignUp({ user }) {
     fetchData();
   }, [eventId, user]);
 
-  console.log(event);
+  // Correct date-only comparison (true only if event was before today)
+  const eventHasPassed = event
+    ? (() => {
+      const eventDate = new Date(event.date);
+      const today = new Date();
+
+      eventDate.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+
+      return eventDate < today;
+    })()
+    : false;
 
   return (
     <div className="signup">
@@ -97,20 +103,27 @@ export default function SignUp({ user }) {
         </a>
         <h1>Sign Up</h1>
       </header>
+
       {!event && <p>Select an event from the main page</p>}
 
       {event && (
         <div className="event">
           <h2 className="event-title">{event.theme}</h2>
+
           <div className="event-body">
             <div className="event-body-photo-container">
-              <img className="event-body-photo" src={`../${event.photo}`} />
+              <img
+                className="event-body-photo"
+                src={`../${event.photo}`}
+                alt={event.theme}
+              />
             </div>
             <p className="event-body-description">{event.description}</p>
           </div>
+
           <h3 className="events-event-content-title">
             {formatDate(event.date)} @{' '}
-            <a href={event.location.map} target="map">
+            <a href={event.location.map} target="map" rel="noreferrer">
               {event.location.name}
             </a>{' '}
             7pm-10pm
@@ -119,20 +132,28 @@ export default function SignUp({ user }) {
           {user ? (
             <>
               <p>You are currently:</p>
-              <div className={`event-rsvp ${eventHasPassed.current ? 'past' : ''}`}>
-                <button onClick={rsvp} data-id="no" className={userResponse === -1 ? 'active' : ''}>
+              <div className={`event-rsvp ${eventHasPassed ? 'past' : ''}`}>
+                <button
+                  onClick={rsvp}
+                  data-id="no"
+                  className={userResponse === -1 ? 'active' : ''}
+                >
                   Not Coming 🥲
                 </button>
+
                 <button
                   onClick={rsvp}
                   data-id="maybe"
                   className={userResponse === 0 ? 'active' : ''}
                 >
-                  {' '}
                   Not Sure 🤔
                 </button>
-                <button onClick={rsvp} data-id="yes" className={userResponse === 1 ? 'active' : ''}>
-                  {' '}
+
+                <button
+                  onClick={rsvp}
+                  data-id="yes"
+                  className={userResponse === 1 ? 'active' : ''}
+                >
                   Planning to Come 🥳
                 </button>
               </div>
@@ -142,7 +163,8 @@ export default function SignUp({ user }) {
           )}
         </div>
       )}
-      <ToastContainer></ToastContainer>
+
+      <ToastContainer />
     </div>
   );
 }
