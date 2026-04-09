@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
-import { formatDate } from '../../utils';
+import { formatDate, getBackendUrl } from '../../utils';
 import './index.scss';
 
 export default function SignUp({ user }) {
@@ -10,10 +10,7 @@ export default function SignUp({ user }) {
   const [event, setEvent] = useState(null);
   const [userResponse, setUserResponse] = useState(null); // -1, 0, 1, or null
 
-  const BACKEND_URL =
-    window.location.hostname === 'localhost'
-      ? 'http://localhost:8000'
-      : 'https://api.codeandbourbon.com';
+  const BACKEND_URL = getBackendUrl();
 
   // Load event + signup
   const fetchData = async () => {
@@ -29,12 +26,9 @@ export default function SignUp({ user }) {
 
       // If user logged in, fetch their signup
       if (user?._id) {
-        const signup = await fetch(
-          `${BACKEND_URL}/api/signups?eventId=${eventId}`,
-          {
-            credentials: 'include',
-          }
-        ).then((res) => res.json());
+        const signup = await fetch(`${BACKEND_URL}/api/signups?eventId=${eventId}`, {
+          credentials: 'include',
+        }).then((res) => res.json());
 
         if (signup && typeof signup.status === 'number') {
           setUserResponse(signup.status);
@@ -82,9 +76,7 @@ export default function SignUp({ user }) {
     fetchData();
   }, [eventId, user]);
 
-  const eventHasPassed = event
-    ? event.date < new Date().toISOString().slice(0, 10)
-    : false;
+  const eventHasPassed = event ? event.date < new Date().toISOString().slice(0, 10) : false;
 
   return (
     <div className="signup">
@@ -103,11 +95,7 @@ export default function SignUp({ user }) {
 
           <div className="event-body">
             <div className="event-body-photo-container">
-              <img
-                className="event-body-photo"
-                src={`../${event.photo}`}
-                alt={event.theme}
-              />
+              <img className="event-body-photo" src={`../${event.photo}`} alt={event.theme} />
             </div>
             <p className="event-body-description">{event.description}</p>
           </div>
@@ -124,11 +112,7 @@ export default function SignUp({ user }) {
             <>
               <p>You are currently:</p>
               <div className={`event-rsvp ${eventHasPassed ? 'past' : ''}`}>
-                <button
-                  onClick={rsvp}
-                  data-id="no"
-                  className={userResponse === -1 ? 'active' : ''}
-                >
+                <button onClick={rsvp} data-id="no" className={userResponse === -1 ? 'active' : ''}>
                   Not Coming 🥲
                 </button>
 
@@ -140,11 +124,7 @@ export default function SignUp({ user }) {
                   Not Sure 🤔
                 </button>
 
-                <button
-                  onClick={rsvp}
-                  data-id="yes"
-                  className={userResponse === 1 ? 'active' : ''}
-                >
+                <button onClick={rsvp} data-id="yes" className={userResponse === 1 ? 'active' : ''}>
                   Planning to Come 🥳
                 </button>
               </div>

@@ -1,13 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
+import { getBackendUrl } from '../../utils';
 import './index.scss';
 
 export default function User({ user, setUser }) {
-  const BACKEND_URL =
-    window.location.hostname === 'localhost'
-      ? 'http://localhost:8000'
-      : 'https://api.codeandbourbon.com';
+  const BACKEND_URL = getBackendUrl();
 
   useEffect(() => {
     axios

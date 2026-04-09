@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { formatDate } from '../../utils';
+import { formatDate, getBackendUrl } from '../../utils';
 import EventCard from '../EventCard';
 import './index.scss';
 
@@ -10,10 +10,7 @@ export default function Events() {
   // const navigate = useNavigate();
 
   const fetchData = async () => {
-    const BACKEND_URL =
-      window.location.hostname === 'localhost'
-        ? 'http://localhost:8000'
-        : 'https://api.codeandbourbon.com';
+    const BACKEND_URL = getBackendUrl();
 
     try {
       const fetchedEvents = await fetch(`${BACKEND_URL}/api/events`).then((res) => res.json());

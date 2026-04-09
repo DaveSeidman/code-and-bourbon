@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 
 import About from './components/about';
+import ConsoleChat from './components/console-chat';
 import Events from './components/events';
 import Footer from './components/footer';
 import Hero from './components/hero';
@@ -34,6 +35,7 @@ export default function App() {
   return (
     <Router basename={basePath}>
       <div className="app">
+        <ConsoleChat user={user} />
         <Routes>
           <Route
             path="/signup/:eventId?"
