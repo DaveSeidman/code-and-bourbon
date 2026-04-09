@@ -55,12 +55,6 @@ export default function ConsoleChat({ user, setUser }) {
   const hasLoadedHistoryRef = useRef(false);
 
   useEffect(() => {
-    if (!user?._id) {
-      historyRef.current = [];
-      hasLoadedHistoryRef.current = false;
-      return undefined;
-    }
-
     const backendUrl = getBackendUrl();
     const previousGlobals = new Map();
 
@@ -72,32 +66,46 @@ export default function ConsoleChat({ user, setUser }) {
       console.warn('%c⚠️  [c&b.chat]%c %s', CHAT_WARNING_STYLE, '', message);
     };
 
-    if (!user.canUseChat) {
-      const knock = async () => {
-        const response = await fetch(`${backendUrl}/api/chat/request-access`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        const payload = await response.json();
+    const knock = async () => {
+      if (!user?._id) {
+        warn('Login first, then run knock() again.');
+        return null;
+      }
 
-        if (!response.ok) {
-          warn(payload.error || 'Unable to request chat access.');
-          return null;
-        }
+      const response = await fetch(`${backendUrl}/api/chat/request-access`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const payload = await response.json();
 
-        if (payload.member && setUser) {
-          setUser(payload.member);
-        }
+      if (!response.ok) {
+        warn(payload.error || 'Unable to request chat access.');
+        return null;
+      }
 
-        log(payload.message, CHAT_NOTICE_STYLE);
-        return payload;
+      if (payload.member && setUser) {
+        setUser(payload.member);
+      }
+
+      log(payload.message, CHAT_NOTICE_STYLE);
+      return payload;
+    };
+
+    installGlobal('knock', knock, previousGlobals);
+
+    if (!user?._id) {
+      historyRef.current = [];
+      hasLoadedHistoryRef.current = false;
+
+      return () => {
+        restoreGlobals(previousGlobals);
       };
+    }
 
-      installGlobal('knock', knock, previousGlobals);
-
+    if (!user.canUseChat) {
       log(
         user.chatAccessRequestedAt
           ? '⏳ Access request already queued. Hang tight.'
