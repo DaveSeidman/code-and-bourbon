@@ -66,32 +66,43 @@ export default function ConsoleChat({ user, setUser }) {
       console.warn('%c⚠️  [c&b.chat]%c %s', CHAT_WARNING_STYLE, '', message);
     };
 
-    const knock = async () => {
+    const knock = () => {
       if (!user?._id) {
-        warn('Login first, then run knock() again.');
-        return null;
+        const message = 'Login first, then run knock() again.';
+        warn(message);
+        return message;
       }
 
-      const response = await fetch(`${backendUrl}/api/chat/request-access`, {
+      fetch(`${backendUrl}/api/chat/request-access`, {
         method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
-      });
-      const payload = await response.json();
+      })
+        .then(async (response) => {
+          const payload = await response.json();
 
-      if (!response.ok) {
-        warn(payload.error || 'Unable to request chat access.');
-        return null;
-      }
+          if (!response.ok) {
+            warn(payload.error || 'Unable to request chat access.');
+            return null;
+          }
 
-      if (payload.member && setUser) {
-        setUser(payload.member);
-      }
+          if (payload.member && setUser) {
+            setUser(payload.member);
+          }
 
-      log(payload.message, CHAT_NOTICE_STYLE);
-      return payload;
+          log(payload.message, CHAT_NOTICE_STYLE);
+          return payload;
+        })
+        .catch(() => {
+          warn('Unable to request chat access.');
+          return null;
+        });
+
+      return user.canUseChat
+        ? 'Already inside. Checking with the gatekeeper anyway...'
+        : 'Knocking...';
     };
 
     installGlobal('knock', knock, previousGlobals);
