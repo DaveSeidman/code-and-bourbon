@@ -135,6 +135,36 @@ export default function ConsoleChat({ user, setUser }) {
       );
     };
 
+    const printPendingRequests = (members) => {
+      const pendingMembers = members
+        .filter((member) => member.chatAccessRequestedAt && !member.canUseChat)
+        .sort(
+          (left, right) =>
+            new Date(left.chatAccessRequestedAt) - new Date(right.chatAccessRequestedAt),
+        );
+
+      if (!pendingMembers.length) {
+        log('No pending access requests.', CHAT_NOTICE_STYLE);
+        return pendingMembers;
+      }
+
+      log('Pending access requests ↓', CHAT_NOTICE_STYLE);
+      console.table(
+        pendingMembers.map((member) => ({
+          name: member.displayName,
+          email: member.email,
+          requestedAt: member.chatAccessRequestedAt,
+          requestCount: member.chatAccessRequestCount,
+        })),
+      );
+      log(
+        'Use approveChat("person@example.com") or denyChat("person@example.com").',
+        CHAT_NOTICE_STYLE,
+      );
+
+      return pendingMembers;
+    };
+
     const echo = (input, ...values) => {
       const message = parseConsoleMessage(input, values);
 
@@ -155,7 +185,7 @@ export default function ConsoleChat({ user, setUser }) {
       });
     };
 
-    const loadMembers = async () => {
+    const loadMembers = async ({ pendingOnly = false } = {}) => {
       if (!user.isChatAdmin) {
         warn('Only chat admins can review access.');
         return [];
@@ -169,6 +199,10 @@ export default function ConsoleChat({ user, setUser }) {
       if (!response.ok) {
         warn(payload.error || 'Unable to load members.');
         return [];
+      }
+
+      if (pendingOnly) {
+        return printPendingRequests(payload);
       }
 
       console.table(
@@ -186,7 +220,7 @@ export default function ConsoleChat({ user, setUser }) {
       return payload;
     };
 
-    const updateChatAccess = async (identifier, approved) => {
+    const updateChatAccess = async (identifier, approved, { clearRequest = false } = {}) => {
       if (!user.isChatAdmin) {
         warn('Only chat admins can change access.');
         return null;
@@ -206,6 +240,7 @@ export default function ConsoleChat({ user, setUser }) {
         body: JSON.stringify({
           identifier,
           approved,
+          clearRequest,
         }),
       });
       const payload = await response.json();
@@ -220,6 +255,8 @@ export default function ConsoleChat({ user, setUser }) {
         CHAT_NOTICE_STYLE,
       );
 
+      await loadMembers({ pendingOnly: true });
+
       return payload;
     };
 
@@ -228,9 +265,10 @@ export default function ConsoleChat({ user, setUser }) {
 
     if (user.isChatAdmin) {
       installGlobal('chatMembers', loadMembers, previousGlobals);
+      installGlobal('chatPending', () => loadMembers({ pendingOnly: true }), previousGlobals);
       installGlobal(
         'approveChat',
-        (identifier) => updateChatAccess(identifier, true),
+        (identifier) => updateChatAccess(identifier, true, { clearRequest: true }),
         previousGlobals,
       );
       installGlobal(
@@ -238,9 +276,18 @@ export default function ConsoleChat({ user, setUser }) {
         (identifier) => updateChatAccess(identifier, false),
         previousGlobals,
       );
+      installGlobal(
+        'denyChat',
+        (identifier) => updateChatAccess(identifier, false, { clearRequest: true }),
+        previousGlobals,
+      );
     }
 
     announceAccess();
+
+    if (user.isChatAdmin) {
+      loadMembers({ pendingOnly: true });
+    }
 
     const socket = io(backendUrl, {
       withCredentials: true,
