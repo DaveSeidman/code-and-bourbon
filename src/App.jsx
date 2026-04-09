@@ -27,7 +27,6 @@ export default function App() {
   useEffect(() => {
     const userFromStorage = localStorage.getItem('user');
     if (userFromStorage) {
-      console.log('found user in storage, set state');
       setUser(JSON.parse(userFromStorage));
     }
   }, []);
@@ -35,7 +34,7 @@ export default function App() {
   return (
     <Router basename={basePath}>
       <div className="app">
-        <ConsoleChat user={user} />
+        <ConsoleChat user={user} setUser={setUser} />
         <Routes>
           <Route
             path="/signup/:eventId?"

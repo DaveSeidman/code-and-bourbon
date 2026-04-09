@@ -3,9 +3,9 @@ import { io } from 'socket.io-client';
 
 import { getBackendUrl } from '../../utils';
 
-const CHAT_PREFIX_STYLE = 'color: #8b5e3c; font-weight: 700;';
-const CHAT_NOTICE_STYLE = 'color: #49617b; font-weight: 700;';
-const CHAT_WARNING_STYLE = 'color: #a13a2b; font-weight: 700;';
+const CHAT_PREFIX_STYLE = 'color: #0f766e; font-weight: 700;';
+const CHAT_NOTICE_STYLE = 'color: #334155; font-weight: 700;';
+const CHAT_WARNING_STYLE = 'color: #b45309; font-weight: 700;';
 const HISTORY_LIMIT = 25;
 
 const formatChatTimestamp = (createdAt) =>
@@ -49,13 +49,13 @@ const restoreGlobals = (previousGlobals) => {
   });
 };
 
-export default function ConsoleChat({ user }) {
+export default function ConsoleChat({ user, setUser }) {
   const socketRef = useRef(null);
   const historyRef = useRef([]);
   const hasLoadedHistoryRef = useRef(false);
 
   useEffect(() => {
-    if (!user?.canUseChat) {
+    if (!user?._id) {
       historyRef.current = [];
       hasLoadedHistoryRef.current = false;
       return undefined;
@@ -65,20 +65,62 @@ export default function ConsoleChat({ user }) {
     const previousGlobals = new Map();
 
     const log = (message, style = CHAT_PREFIX_STYLE) => {
-      console.log('%c[c&b chat]%c %s', style, '', message);
+      console.log('%c💬 [c&b.chat]%c %s', style, '', message);
     };
 
     const warn = (message) => {
-      console.warn('%c[c&b chat]%c %s', CHAT_WARNING_STYLE, '', message);
+      console.warn('%c⚠️  [c&b.chat]%c %s', CHAT_WARNING_STYLE, '', message);
     };
 
-    const printHistory = (messages = historyRef.current) => {
+    if (!user.canUseChat) {
+      const knock = async () => {
+        const response = await fetch(`${backendUrl}/api/chat/request-access`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const payload = await response.json();
+
+        if (!response.ok) {
+          warn(payload.error || 'Unable to request chat access.');
+          return null;
+        }
+
+        if (payload.member && setUser) {
+          setUser(payload.member);
+        }
+
+        log(payload.message, CHAT_NOTICE_STYLE);
+        return payload;
+      };
+
+      installGlobal('knock', knock, previousGlobals);
+
+      log(
+        user.chatAccessRequestedAt
+          ? '⏳ Access request already queued. Hang tight.'
+          : '🚪 Access is gated. Run knock() if you want in.',
+        CHAT_NOTICE_STYLE,
+      );
+
+      return () => {
+        restoreGlobals(previousGlobals);
+      };
+    }
+
+    const printHistory = (messages = historyRef.current, { silentEmpty = false } = {}) => {
       if (!messages.length) {
-        log('No messages yet. Type echo("hello") to start things off.', CHAT_NOTICE_STYLE);
+        if (silentEmpty) {
+          return messages;
+        }
+
+        log('No packets yet. Use echo("hello") to open the thread.', CHAT_NOTICE_STYLE);
         return messages;
       }
 
-      log('Recent messages:', CHAT_NOTICE_STYLE);
+      log('Latest messages ↓', CHAT_NOTICE_STYLE);
       messages.forEach((message) => {
         log(formatChatLine(message));
       });
@@ -86,17 +128,11 @@ export default function ConsoleChat({ user }) {
       return messages;
     };
 
-    const showHelp = () => {
-      log('Use echo("hello") or echo`hello` to post a message.', CHAT_NOTICE_STYLE);
-      log('`say()` still works too, if you already got used to it.', CHAT_NOTICE_STYLE);
-      log('Run chatHistory() any time to print the latest messages again.', CHAT_NOTICE_STYLE);
-
-      if (user.isChatAdmin) {
-        log(
-          'Admin commands: chatMembers(), approveChat("person@example.com"), revokeChat("person@example.com").',
-          CHAT_NOTICE_STYLE,
-        );
-      }
+    const announceAccess = () => {
+      log(
+        '🔓 Access granted. You found the backchannel. use echo("...") to chat.',
+        CHAT_NOTICE_STYLE,
+      );
     };
 
     const echo = (input, ...values) => {
@@ -142,6 +178,7 @@ export default function ConsoleChat({ user }) {
           approved: member.chatApproved,
           admin: member.isChatAdmin,
           canUseChat: member.canUseChat,
+          requestedAt: member.chatAccessRequestedAt,
           approvedAt: member.chatApprovedAt,
         })),
       );
@@ -187,9 +224,7 @@ export default function ConsoleChat({ user }) {
     };
 
     installGlobal('echo', echo, previousGlobals);
-    installGlobal('say', echo, previousGlobals);
     installGlobal('chatHistory', () => printHistory(), previousGlobals);
-    installGlobal('chatHelp', showHelp, previousGlobals);
 
     if (user.isChatAdmin) {
       installGlobal('chatMembers', loadMembers, previousGlobals);
@@ -205,7 +240,7 @@ export default function ConsoleChat({ user }) {
       );
     }
 
-    showHelp();
+    announceAccess();
 
     const socket = io(backendUrl, {
       withCredentials: true,
@@ -213,13 +248,9 @@ export default function ConsoleChat({ user }) {
 
     socketRef.current = socket;
 
-    socket.on('connect', () => {
-      log('Connected.', CHAT_NOTICE_STYLE);
-    });
-
     socket.on('disconnect', (reason) => {
       if (reason !== 'io client disconnect') {
-        warn('Disconnected from chat. Socket.IO will keep trying to reconnect.');
+        warn('Socket dropped. Retrying...');
       }
     });
 
@@ -232,11 +263,9 @@ export default function ConsoleChat({ user }) {
 
       if (!hasLoadedHistoryRef.current) {
         hasLoadedHistoryRef.current = true;
-        printHistory(messages);
+        printHistory(messages, { silentEmpty: true });
         return;
       }
-
-      log('History refreshed. Run chatHistory() to print it again.', CHAT_NOTICE_STYLE);
     });
 
     socket.on('chat:message', (message) => {
@@ -257,7 +286,7 @@ export default function ConsoleChat({ user }) {
       hasLoadedHistoryRef.current = false;
       restoreGlobals(previousGlobals);
     };
-  }, [user?._id, user?.canUseChat, user?.isChatAdmin]);
+  }, [user?._id, user?.canUseChat, user?.isChatAdmin, user?.chatAccessRequestedAt]);
 
   return null;
 }

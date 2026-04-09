@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import { getBackendUrl } from '../../utils';
 import './index.scss';
@@ -28,9 +28,7 @@ export default function User({ user, setUser }) {
       .then(() => {
         setUser(null);
       })
-      .catch((err) => {
-        console.error('Logout failed', err);
-      });
+      .catch(() => {});
   };
 
   return (

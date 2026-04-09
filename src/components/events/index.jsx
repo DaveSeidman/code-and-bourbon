@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { formatDate, getBackendUrl } from '../../utils';
 import EventCard from '../EventCard';
@@ -7,18 +6,15 @@ import './index.scss';
 
 export default function Events() {
   const [events, setEvents] = useState([]);
-  // const navigate = useNavigate();
 
   const fetchData = async () => {
     const BACKEND_URL = getBackendUrl();
 
     try {
       const fetchedEvents = await fetch(`${BACKEND_URL}/api/events`).then((res) => res.json());
-      console.log(fetchedEvents);
       setEvents(fetchedEvents);
-    } catch (err) {
-      console.log('cms unreachable');
-      // setEvents([]);
+    } catch {
+      // Intentionally quiet in the console; the page already shows a loading state.
     }
   };
 

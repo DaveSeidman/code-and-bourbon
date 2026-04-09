@@ -36,9 +36,7 @@ export default function SignUp({ user }) {
           setUserResponse(null);
         }
       }
-    } catch (err) {
-      console.error('Error loading data:', err);
-    }
+    } catch {}
   };
 
   // Handle clicking an RSVP option
@@ -66,8 +64,7 @@ export default function SignUp({ user }) {
         setUserResponse(updated.status);
         toast('Thanks for Responding!');
       }
-    } catch (err) {
-      console.error('Error saving RSVP:', err);
+    } catch {
       toast('There was an issue saving your response');
     }
   };
