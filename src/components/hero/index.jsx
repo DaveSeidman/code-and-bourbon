@@ -1,4 +1,9 @@
-import { MeshTransmissionMaterial, OrbitControls, useGLTF } from '@react-three/drei';
+import {
+  MeshTransmissionMaterial,
+  OrbitControls,
+  PerformanceMonitor,
+  useGLTF,
+} from '@react-three/drei';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
@@ -343,26 +348,35 @@ function OrbitMomentum({ controlsRef, orbitVelRef }) {
   const isDragging = useRef(false);
   const lastAz = useRef(null);
 
-  const baseDrift = 0.1; // rad/sec minimum drift speed (direction preserved from swipe)
+  const baseDrift = 0.055; // rad/sec minimum drift speed (direction preserved from swipe)
   const halfLife = 0.3; // seconds - how quickly it decelerates to baseDrift
-  const maxRadPerSec = 1.2;
-
-  const RAD_PER_SEC_PER_AUTOUNIT = (2 * Math.PI) / 60;
+  const maxRadPerSec = 0.8;
 
   const wrapDelta = (d) => THREE.MathUtils.euclideanModulo(d + Math.PI, Math.PI * 2) - Math.PI;
 
   useEffect(() => {
+    const controls = controlsRef.current;
+    const canvas = controls?.domElement;
+
+    if (!canvas) {
+      return undefined;
+    }
+
     const down = () => (isDragging.current = true);
     const up = () => (isDragging.current = false);
 
-    window.addEventListener('pointerdown', down, { passive: true });
+    canvas.addEventListener('pointerdown', down, { passive: true });
     window.addEventListener('pointerup', up, { passive: true });
+    window.addEventListener('pointercancel', up, { passive: true });
+    canvas.addEventListener('pointerleave', up, { passive: true });
 
     return () => {
-      window.removeEventListener('pointerdown', down);
+      canvas.removeEventListener('pointerdown', down);
       window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+      canvas.removeEventListener('pointerleave', up);
     };
-  }, []);
+  }, [controlsRef]);
 
   useFrame((_, dt) => {
     const controls = controlsRef.current;
@@ -384,12 +398,12 @@ function OrbitMomentum({ controlsRef, orbitVelRef }) {
       const target = sign * baseDrift;
       const decay = Math.pow(0.5, dt / halfLife);
       orbitVelRef.current = target + (orbitVelRef.current - target) * decay;
+
+      controls.setAzimuthalAngle(az + orbitVelRef.current * dt);
     }
 
     orbitVelRef.current = THREE.MathUtils.clamp(orbitVelRef.current, -maxRadPerSec, maxRadPerSec);
-
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = -orbitVelRef.current / RAD_PER_SEC_PER_AUTOUNIT;
+    controls.autoRotate = false;
     controls.update();
 
     invalidate(); // keep drifting visible with frameloop="demand"
@@ -397,6 +411,34 @@ function OrbitMomentum({ controlsRef, orbitVelRef }) {
   });
 
   return null;
+}
+
+function HeroPerformanceGovernor({ setDpr }) {
+  return (
+    <PerformanceMonitor
+      bounds={(refreshrate) => ({
+        lower: Math.max(28, refreshrate * 0.45),
+        upper: Math.max(45, refreshrate * 0.75),
+      })}
+      factor={0.35}
+      flipflops={3}
+      onChange={({ factor }) => {
+        setDpr((currentDpr) => {
+          const targetDpr = THREE.MathUtils.lerp(0.85, 1.35, factor);
+          const roundedDpr = Math.round(targetDpr * 100) / 100;
+
+          if (Math.abs(currentDpr - roundedDpr) < 0.02) {
+            return currentDpr;
+          }
+
+          return roundedDpr;
+        });
+      }}
+      onFallback={() => {
+        setDpr(0.85);
+      }}
+    />
+  );
 }
 
 // Camera elevation: 15 degrees above horizontal = polar angle of 75 degrees
@@ -409,15 +451,13 @@ const DISTANCE = 12;
 
 export default function Hero() {
   const isMobile = useMemo(() => isMobileDevice(), []);
+  const [dpr, setDpr] = useState(isMobile ? 0.8 : 1.1);
 
   const controlsRef = useRef();
   const orbitVelRef = useRef(0);
 
   const initialY = Math.sin((ELEVATION_DEG * Math.PI) / 180) * DISTANCE;
   const initialZ = Math.cos((ELEVATION_DEG * Math.PI) / 180) * DISTANCE;
-
-  // DPR: keep mobile capped at 1.0; desktop can go higher if you want
-  const dpr = useMemo(() => (isMobile ? [0.6, 1.0] : [1.0, 1.5]), [isMobile]);
 
   return (
     <div className="hero">
@@ -438,6 +478,7 @@ export default function Hero() {
         }}
         style={{ position: 'absolute', top: 0, left: 0 }}
       >
+        {!isMobile && <HeroPerformanceGovernor setDpr={setDpr} />}
         <ambientLight intensity={15} />
         <directionalLight position={[2, 10, 0]} intensity={8} />
         <directionalLight position={[-5, 5, -5]} intensity={3} />

@@ -1,17 +1,22 @@
 .nav {
-  position: absolute;
+  position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
   height: 3rem;
+  z-index: 30;
   // background: rgba(0, 0, 0, .5);
   display: flex;
   justify-content: flex-end;
   color: white;
   pointer-events: none;
+  padding: 0.75rem 1rem 0;
+  box-sizing: border-box;
 
   &-user {
     pointer-events: all;
     display: flex;
+    align-items: center;
     * {
       margin-right: 1rem;
       &:last-child {
@@ -21,6 +26,8 @@
   }
   button {
     pointer-events: all;
+    position: relative;
+    z-index: 1;
     padding: 0 2rem;
     font-family: 'Outfit';
   }
