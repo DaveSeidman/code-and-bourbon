@@ -416,10 +416,10 @@ function OrbitMomentum({ controlsRef, orbitVelRef }) {
 function HeroPerformanceGovernor({ setDpr }) {
   return (
     <PerformanceMonitor
-      bounds={(refreshrate) => ({
-        lower: Math.max(28, refreshrate * 0.45),
-        upper: Math.max(45, refreshrate * 0.75),
-      })}
+      bounds={(refreshrate) => [
+        Math.max(28, refreshrate * 0.45),
+        Math.max(45, refreshrate * 0.75),
+      ]}
       factor={0.35}
       flipflops={3}
       onChange={({ factor }) => {
