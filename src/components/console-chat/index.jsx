@@ -110,6 +110,7 @@ export default function ConsoleChat({ user, setUser }) {
     if (!user?._id) {
       historyRef.current = [];
       hasLoadedHistoryRef.current = false;
+      log('⌁ There’s a backchannel beneath the surface. Sign in if you want to knock.', CHAT_NOTICE_STYLE);
 
       return () => {
         restoreGlobals(previousGlobals);

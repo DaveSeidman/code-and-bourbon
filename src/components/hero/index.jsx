@@ -346,13 +346,11 @@ function CameraController({ baseFov = 20, zoomFov = 35 }) {
 function OrbitMomentum({ controlsRef, orbitVelRef }) {
   const { invalidate } = useThree();
   const isDragging = useRef(false);
-  const lastAz = useRef(null);
+  const lastMovementX = useRef(0);
+  const momentum = useRef(-0.14);
 
-  const baseDrift = 0.055; // rad/sec minimum drift speed (direction preserved from swipe)
-  const halfLife = 0.3; // seconds - how quickly it decelerates to baseDrift
-  const maxRadPerSec = 0.8;
-
-  const wrapDelta = (d) => THREE.MathUtils.euclideanModulo(d + Math.PI, Math.PI * 2) - Math.PI;
+  const minimumMomentum = 0.14;
+  const momentumDamping = 0.995;
 
   useEffect(() => {
     const controls = controlsRef.current;
@@ -362,52 +360,59 @@ function OrbitMomentum({ controlsRef, orbitVelRef }) {
       return undefined;
     }
 
-    const down = () => (isDragging.current = true);
-    const up = () => (isDragging.current = false);
+    const down = () => {
+      isDragging.current = true;
+      lastMovementX.current = 0;
+    };
+    const move = (event) => {
+      if (isDragging.current && event.movementX !== 0) {
+        lastMovementX.current = event.movementX;
+      }
+    };
+    const up = () => {
+      if (!isDragging.current) return;
+
+      isDragging.current = false;
+
+      if (lastMovementX.current !== 0) {
+        momentum.current = lastMovementX.current;
+      }
+    };
 
     canvas.addEventListener('pointerdown', down, { passive: true });
+    canvas.ownerDocument.addEventListener('pointermove', move, { passive: true });
     window.addEventListener('pointerup', up, { passive: true });
     window.addEventListener('pointercancel', up, { passive: true });
-    canvas.addEventListener('pointerleave', up, { passive: true });
 
     return () => {
       canvas.removeEventListener('pointerdown', down);
+      canvas.ownerDocument.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', up);
       window.removeEventListener('pointercancel', up);
-      canvas.removeEventListener('pointerleave', up);
     };
   }, [controlsRef]);
 
-  useFrame((_, dt) => {
+  useFrame(() => {
     const controls = controlsRef.current;
     if (!controls) return;
 
-    if (lastAz.current == null) {
-      lastAz.current = controls.getAzimuthalAngle();
-      orbitVelRef.current = baseDrift;
+    if (!isDragging.current) {
+      const direction = Math.sign(momentum.current) || -1;
+      momentum.current =
+        direction * Math.max(Math.abs(momentum.current * momentumDamping), minimumMomentum);
+
+      const rotationPerMovementPixel = (2 * Math.PI) / Math.max(controls.domElement.clientHeight, 1);
+      controls.setAzimuthalAngle(
+        controls.getAzimuthalAngle() - momentum.current * rotationPerMovementPixel,
+      );
+
+      orbitVelRef.current = -momentum.current * rotationPerMovementPixel * 60;
     }
 
-    const az = controls.getAzimuthalAngle();
-    const delta = wrapDelta(az - lastAz.current);
-    const measuredVel = delta / Math.max(dt, 1e-4);
-
-    if (isDragging.current) {
-      orbitVelRef.current = measuredVel;
-    } else {
-      const sign = Math.sign(orbitVelRef.current) || 1;
-      const target = sign * baseDrift;
-      const decay = Math.pow(0.5, dt / halfLife);
-      orbitVelRef.current = target + (orbitVelRef.current - target) * decay;
-
-      controls.setAzimuthalAngle(az + orbitVelRef.current * dt);
-    }
-
-    orbitVelRef.current = THREE.MathUtils.clamp(orbitVelRef.current, -maxRadPerSec, maxRadPerSec);
     controls.autoRotate = false;
     controls.update();
 
     invalidate(); // keep drifting visible with frameloop="demand"
-    lastAz.current = controls.getAzimuthalAngle();
   });
 
   return null;
@@ -494,7 +499,7 @@ export default function Hero() {
 
         <OrbitMomentum controlsRef={controlsRef} orbitVelRef={orbitVelRef} />
 
-        <CameraController baseFov={13} zoomFov={20} />
+        <CameraController baseFov={13} zoomFov={18} />
         <VideoEnvironment radius={12} height={12} cubeMapSize={256} />
         <GlassModel isMobile={isMobile} orbitVelRef={orbitVelRef} />
       </Canvas>
